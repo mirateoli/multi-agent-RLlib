@@ -26,6 +26,8 @@ class PipeAgent:
         # Pipe should be initialized to its start point
 
         self.position = self.start_pt
+        self.goal = self.end_pt
+        return self.position,self.goal
 
     def get_position(self):
         return self.position
@@ -45,3 +47,6 @@ class PipeAgent:
             self.position[Y] = y_length
         elif self.position[Y] < 0.0:
             self.position[Y] = 0.0
+
+        return self.position
+
