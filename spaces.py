@@ -1,7 +1,7 @@
 
 import numpy as np
 
-from gym import spaces
+from gymnasium import spaces
 
 from inputs import num_pipes, num_directions, grid_size
 # Observation spaces
