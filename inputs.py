@@ -1,10 +1,10 @@
 import numpy as np
 
-x_length = 4
-y_length = 4
-z_length = 4
+x_length = 8
+y_length = 8
+z_length = 8
 
-grid_size = 4
+grid_size = 8
 
 grid_density = 1
 

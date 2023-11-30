@@ -3,7 +3,7 @@ from typing import Dict
 import ray
 import gymnasium as gym
 
-import vedo
+from vedo import *
 
 from ray.rllib.env import EnvContext
 from ray.rllib.utils import check_env
@@ -13,6 +13,10 @@ from agent import *
 from spaces import *
 
 class EnvironmentSingle(gym.Env):
+
+    metadata = {
+        "render.modes": ["rgb_array"],
+    }
     
     def __init__(self,config: EnvContext):
         super().__init__()
@@ -23,10 +27,13 @@ class EnvironmentSingle(gym.Env):
         self.observation_space = agent_obs_space
         self.action_space = agent_action_space
 
+        self.path = [self.start] # list to store all locations of 
+
         
 
     def reset(self,*, seed=None, options=None):
 
+        self.path = [self.start] # reset path to empty list
         self.agent.initialize() 
 
         observation = {
@@ -53,16 +60,31 @@ class EnvironmentSingle(gym.Env):
             terminated = False
             truncated = False
 
+        self.path.append(self.agent.position)
+
         return observation, reward, terminated, truncated, info
 
 
     def render(self):
-        pass
+        pts = self.path
+        ln = Line(pts).z(0.01)
+        ln.color("red5").linewidth(2)
+        show(Points(pts),ln,axes=1).close()
 
     def close(self):
         pass
 
-# env = EnvironmentSingle(start_pts[0],end_pts[0])
+# env = EnvironmentSingle(config={"start_pt":start_pts[0], "end_pt":end_pts[0]})
+# env.reset()
+# env.step(action=2)
+# print(env.path)
+# env.render()
+# env.step(action=2)
+# print(env.path)
+# env.render()
+# env.step(action=0)
+# print(env.path)
+# env.render()
 # # print(env.action_space)
 # # print(env.observation_space)
 

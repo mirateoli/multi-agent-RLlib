@@ -39,11 +39,11 @@ class PipeAgent:
         self.position = np.add(self.position, actions_key[direction])
 
         # don't let agent move out of field
-        if self.position[X] > x_length:
+        if self.position[X] >= x_length:
             self.position[X] = x_length
         elif self.position[X] < 0.0:
             self.position[X] = 0.0
-        if self.position[Y] > y_length:
+        if self.position[Y] >= y_length:
             self.position[Y] = y_length
         elif self.position[Y] < 0.0:
             self.position[Y] = 0.0
