@@ -19,7 +19,7 @@ start_pts = np.array([(3,0),(0,0)])
 
 num_pipes = 2
 
-num_directions = 4
+num_directions = 6
 
 step_reward = -0.001
 arrival_reward = 1.0

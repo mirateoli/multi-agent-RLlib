@@ -1,26 +1,37 @@
 from train_single import trained_checkpoint_path
 from ray.tune.registry import register_env
 from environment_single import EnvironmentSingle
+from ray.rllib.evaluation import RolloutWorker
 import numpy as np
-from train_single import *
+from train_single import trained_checkpoint_path, env_config, config
+from ray.rllib.algorithms.ppo import PPO
 import vedo
+import os
+
+os.environ["PYTHONWARNINGS"] = "ignore::DeprecationWarning"
+
+def log_route(info):
+    pipe_routes = info["env"].get_route()
+    print("Agent locations: {}".format(pipe_routes))
+    return pipe_routes
 
 start_pt = np.array([0,0])
 end_pt = np.array([7,7])
 
-algo.restore(trained_checkpoint_path)
+agent = PPO(config=config)
+agent.restore(trained_checkpoint_path)
 
-policy = algo.get_policy()
+env = EnvironmentSingle(env_config)
 
-test_env = EnvironmentSingle(config={"start_pt":start_pt, "end_pt":end_pt})
-
-obs = test_env.reset()
+ # run until episode ends
+episode_reward = 0
 done = False
-total_reward = 0
-
+obs = env.reset()
 while not done:
-    action = policy.compute_single_action(obs)
-    obs, reward, done, _ = test_env.step(action)
-    total_reward += reward
-    print(total_reward)
-    test_env.render()  # Optionally render the environment
+    action = agent.compute_action(obs)
+    obs, reward, done, info = env.step(action)
+    episode_reward += reward
+    print("agnet moved")
+    print("current path",env.path)
+
+print(env.path)

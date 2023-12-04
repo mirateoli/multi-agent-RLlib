@@ -67,20 +67,24 @@ class EnvironmentSingle(gym.Env):
 
     def render(self):
         pts = self.path
-        ln = Line(pts).z(0.01)
-        ln.color("red5").linewidth(2)
+        ln = Line(pts)
+        ln.color("red5").linewidth(5)
         show(Points(pts),ln,axes=1).close()
 
-    def close(self):
-        pass
+    def get_route(self):
+        return self.path
 
-# env = EnvironmentSingle(config={"start_pt":start_pts[0], "end_pt":end_pts[0]})
-# env.reset()
-# env.step(action=2)
-# print(env.path)
+
+start_pt = np.array([0,0,0])
+end_pt = np.array([7,7,5])
+
+env = EnvironmentSingle(config={"start_pt":start_pt, "end_pt":end_pt})
+env.reset()
+env.step(action=2)
+print(env.path)
 # env.render()
-# env.step(action=2)
-# print(env.path)
+env.step(action=2)
+print(env.path)
 # env.render()
 # env.step(action=0)
 # print(env.path)

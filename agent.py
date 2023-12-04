@@ -9,10 +9,12 @@ E = 2
 W = 3
 
 actions_key = {
-    0 : (0,1),  # North
-    1 : (0,-1), # South
-    2 : (1,0),  # East
-    3 : (-1,0), # West
+    0 : (0,1,0),  # North
+    1 : (0,-1,0), # South
+    2 : (1,0,0),  # East
+    3 : (-1,0,0), # West
+    4 : (0,0,1),  # Up
+    5 : (0,0,-1), # Down
 }
 
 
@@ -47,6 +49,10 @@ class PipeAgent:
             self.position[Y] = y_length
         elif self.position[Y] < 0.0:
             self.position[Y] = 0.0
+        if self.position[Z] >= y_length:
+            self.position[Z] = y_length
+        elif self.position[Z] < 0.0:
+            self.position[Z] = 0.0
 
         return self.position
 

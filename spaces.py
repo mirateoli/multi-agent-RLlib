@@ -7,7 +7,7 @@ from inputs import num_pipes, num_directions, grid_size
 # Observation spaces
 
 agent_self_space = spaces.Box(
-    shape=(2,),
+    shape=(3,),
     dtype=float,
     low=0.0,
     high=grid_size
@@ -23,7 +23,7 @@ agent_self_space = spaces.Box(
 # )
 
 agent_goal_space = spaces.Box(
-    shape=(2,),
+    shape=(3,),
     dtype=float,
     low=0.0,
     high=grid_size
