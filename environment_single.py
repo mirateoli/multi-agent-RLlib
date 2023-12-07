@@ -29,12 +29,16 @@ class EnvironmentSingle(gym.Env):
 
         self.path = [self.start] # list to store all locations of 
 
+        self.maxsteps = 10000
+
         
 
     def reset(self,*, seed=None, options=None):
 
         self.path = [self.start] # reset path to empty list
         self.agent.initialize() 
+
+        self.maxsteps = 10000
 
         observation = {
             'agent_location': self.agent.get_position(),
@@ -46,12 +50,18 @@ class EnvironmentSingle(gym.Env):
 
     def step(self, action):
         observation, reward, terminated, truncated, info, = {}, {}, {}, {}, {}
+
+        self.maxsteps -= 1
         
         observation = {
             'agent_location': self.agent.move(action),
             'goal_position': self.agent.goal
         }
-        if (self.agent.position == self.agent.goal).all():
+
+        if self.maxsteps <= 0:
+            terminated = True
+            truncated = True
+        elif (self.agent.position == self.agent.goal).all():
             reward = 10
             terminated = True
             truncated = False
@@ -75,16 +85,16 @@ class EnvironmentSingle(gym.Env):
         return self.path
 
 
-start_pt = np.array([0,0,0])
-end_pt = np.array([7,7,5])
+# start_pt = np.array([0,0,0])
+# end_pt = np.array([7,7,5])
 
-env = EnvironmentSingle(config={"start_pt":start_pt, "end_pt":end_pt})
-env.reset()
-env.step(action=2)
-print(env.path)
-# env.render()
-env.step(action=2)
-print(env.path)
+# env = EnvironmentSingle(config={"start_pt":start_pt, "end_pt":end_pt})
+# env.reset()
+# env.step(action=2)
+# print(env.path)
+# # env.render()
+# env.step(action=2)
+# print(env.path)
 # env.render()
 # env.step(action=0)
 # print(env.path)

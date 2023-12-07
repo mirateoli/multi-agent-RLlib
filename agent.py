@@ -49,8 +49,8 @@ class PipeAgent:
             self.position[Y] = y_length
         elif self.position[Y] < 0.0:
             self.position[Y] = 0.0
-        if self.position[Z] >= y_length:
-            self.position[Z] = y_length
+        if self.position[Z] >= z_length:
+            self.position[Z] = z_length
         elif self.position[Z] < 0.0:
             self.position[Z] = 0.0
 

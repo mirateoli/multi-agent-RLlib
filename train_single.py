@@ -9,7 +9,7 @@ import os
 import ray
 
 start_pt = np.array([0,0,0])
-end_pt = np.array([7,7,5])
+end_pt = np.array([18,14,19])
 
 train_ID = "Test5_3D"
 
