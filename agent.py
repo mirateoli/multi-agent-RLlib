@@ -14,7 +14,27 @@ actions_key = {
     2 : (1,0,0),  # East
     3 : (-1,0,0), # West
     4 : (0,0,1),  # Up
-    5 : (0,0,-1), # Down
+    5 : (0,0,-1),  # Down
+    6 : (1,1,0),  # North-East
+    7 : (1,-1,0), # North-West
+    8 : (-1,1,0), # South-East
+    9 : (-1,-1,0), # South-West
+    10: (0,1,1),   # Up-North
+    11: (0,1,-1),  # Down-North
+    12: (0,-1,1),   # Up-South
+    13: (0,-1,-1),  # Down-South
+    14: (1,0,1),   # Up-East
+    15: (1,0,-1),  # Down-East
+    16: (-1,0,1),   # Up-West
+    17: (-1,0,-1),  # Down-West
+    # 18: (1,1,1),   # Up-North-East
+    # 19: (1,1,-1),  # Down-North-East
+    # 20: (-1,1,1),   # Up-North-West
+    # 21: (-1,1,-1),  # Down-North-West
+    # 22: (1,-1,1),   # Up-South-East
+    # 23: (1,-1,-1),  # Down-South-East
+    # 24: (-1,-1,1),   # Up-South-West
+    # 25: (-1,-1,-1),  # Down-South-West
 }
 
 

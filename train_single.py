@@ -4,14 +4,15 @@ from ray.tune.registry import register_env
 from environment_single import EnvironmentSingle
 from ray.rllib.algorithms.callbacks import DefaultCallbacks
 
+
 import numpy as np
 import os
 import ray
 
 start_pt = np.array([0,0,0])
-end_pt = np.array([18,14,19])
+end_pt = np.array([11,11,11])
 
-train_ID = "Test5_3D"
+train_ID = "Test8_3D_obs"
 
 class CustomCallbacks(DefaultCallbacks):
     def log_route(info):
@@ -38,7 +39,9 @@ env_config = {
 config = {
     "env": "SinglePipe",
     "env_config": env_config,
+    "num_gpus":1,
     "num_workers": 1,
+    "num_envs_per_worker":5,
     "framework": "torch",
     "callbacks": CustomCallbacks,
     "logger_config":{

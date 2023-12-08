@@ -1,10 +1,15 @@
 import numpy as np
 
-x_length = 20
-y_length = 20
-z_length = 20
 
-grid_size = 20
+obstacle_box = np.array([(2,2,2),(2,2,6),(2,6,6),(6,6,6),(6,2,2),(6,2,6),(2,6,2),(6,6,2)])
+
+obstacles = np.array([2,6,2,6,2,6])  # bounding box (xmin,ymin,zmin,xmax,ymax,zmax)
+
+x_length = 12
+y_length = 12
+z_length = 12
+
+grid_size = 12
 
 grid_density = 1
 
@@ -19,9 +24,10 @@ start_pts = np.array([(3,0),(0,0)])
 
 num_pipes = 2
 
-num_directions = 6
+num_directions = 18
 
 step_reward = -0.001
 arrival_reward = 1.0
 collision_reward = -0.5
 
+print(obstacles)

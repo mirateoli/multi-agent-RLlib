@@ -29,9 +29,14 @@ class EnvironmentSingle(gym.Env):
 
         self.path = [self.start] # list to store all locations of 
 
-        self.maxsteps = 10000
+        self.maxsteps = 1000
 
-        
+        self.obs_ranges = {
+            "x" : (obstacles[0], obstacles[1]),
+            "y" : (obstacles[2], obstacles[3]),
+            "z" : (obstacles[4], obstacles[5]),
+        }
+
 
     def reset(self,*, seed=None, options=None):
 
@@ -65,6 +70,13 @@ class EnvironmentSingle(gym.Env):
             reward = 10
             terminated = True
             truncated = False
+        elif (self.agent.position[0] in self.obs_ranges["x"]) and\
+            (self.agent.position[1] in self.obs_ranges["y"]) and\
+            (self.agent.position[2] in self.obs_ranges["z"]):
+            reward = -10
+            terminated = False
+            truncated = False
+
         else:
             reward = -0.1
             terminated = False
@@ -79,7 +91,11 @@ class EnvironmentSingle(gym.Env):
         pts = self.path
         ln = Line(pts)
         ln.color("red5").linewidth(5)
-        show(Points(pts),ln,axes=1).close()
+        bounding_box = obstacles.tolist()
+        print(bounding_box)
+        box = Box(size=bounding_box)
+        box.color('g4')
+        show(Points(pts),ln,box,axes=1).close()
 
     def get_route(self):
         return self.path
@@ -92,7 +108,7 @@ class EnvironmentSingle(gym.Env):
 # env.reset()
 # env.step(action=2)
 # print(env.path)
-# # env.render()
+# env.render()
 # env.step(action=2)
 # print(env.path)
 # env.render()
