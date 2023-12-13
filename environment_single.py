@@ -29,7 +29,7 @@ class EnvironmentSingle(gym.Env):
 
         self.path = [self.start] # list to store all locations of 
 
-        self.maxsteps = 1000
+        self.maxsteps = 10000
 
         self.obs_ranges = {
             "x" : (obstacles[0], obstacles[1]),
