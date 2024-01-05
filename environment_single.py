@@ -70,15 +70,19 @@ class EnvironmentSingle(gym.Env):
             reward = 10
             terminated = True
             truncated = False
-        elif (self.agent.position[0] in self.obs_ranges["x"]) and\
-            (self.agent.position[1] in self.obs_ranges["y"]) and\
-            (self.agent.position[2] in self.obs_ranges["z"]):
+        elif (self.agent.position[0] in range(self.obs_ranges["x"][0],self.obs_ranges["x"][1])) and\
+            (self.agent.position[1] in range(self.obs_ranges["y"][0],self.obs_ranges["y"][1])) and\
+            (self.agent.position[2] in range(self.obs_ranges["z"][0],self.obs_ranges["z"][1])):
+        # elif (self.agent.position[0] in self.obs_ranges["x"]) and\
+        #     (self.agent.position[1] in self.obs_ranges["y"]) and\
+        #     (self.agent.position[2] in self.obs_ranges["z"]):
             reward = -10
             terminated = False
             truncated = False
+            # print("Agent moved through obstacle")
 
         else:
-            reward = -0.1
+            reward = -0.05
             terminated = False
             truncated = False
 

@@ -9,13 +9,13 @@ import numpy as np
 import os
 import ray
 
-start_pt = np.array([0,0,0])
-end_pt = np.array([11,11,11])
+start_pt = np.array([4,1,4])
+end_pt = np.array([4,10,4])
 
 # start_pt = np.array([2,4,4])
 # end_pt = np.array([4,6,6])
 
-train_ID = "Test9_3D_obs"
+train_ID = "Test11_3D_obs"
 
 class CustomCallbacks(DefaultCallbacks):
     def log_route(info):
