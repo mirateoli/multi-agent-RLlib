@@ -9,13 +9,13 @@ import numpy as np
 import os
 import ray
 
-start_pt = np.array([4,1,4])
-end_pt = np.array([4,10,4])
+# start_pt = np.array([4,1,4])
+# end_pt = np.array([4,10,4])
 
-# start_pt = np.array([2,4,4])
-# end_pt = np.array([4,6,6])
+start_pt = np.array([0,0,0])
+end_pt = np.array([6,6,6])
 
-train_ID = "Test11_3D_obs"
+train_ID = "Test13_3D_obs"
 
 class CustomCallbacks(DefaultCallbacks):
     def log_route(info):
@@ -75,7 +75,7 @@ os.makedirs(trained_checkpoint_path, exist_ok=True)
 trained_checkpoint = trainer.save_checkpoint(trained_checkpoint_path)
 print(f"Final model saved at:", trained_checkpoint_path)
 
-
+# Test one episode
 print("TESTING NOW.......")
 
 test_config = config

@@ -1,15 +1,15 @@
 import numpy as np
 
 
-obstacle_box = np.array([(2,2,2),(2,2,6),(2,6,6),(6,6,6),(6,2,2),(6,2,6),(2,6,2),(6,6,2)])
+# obstacle_box = np.array([(2,2,2),(2,2,6),(2,6,6),(6,6,6),(6,2,2),(6,2,6),(2,6,2),(6,6,2)])
 
-obstacles = np.array([2,6,2,9,2,6])  # bounding box (xmin,ymin,zmin,xmax,ymax,zmax)
+# obstacles = np.array([2,6,2,9,2,6])  # bounding box (xmin,ymin,zmin,xmax,ymax,zmax)
 
-x_length = 12
-y_length = 12
-z_length = 12
+x_length = 6
+y_length = 6
+z_length = 6
 
-grid_size = 12
+grid_size = 7
 
 grid_density = 1
 
@@ -30,4 +30,4 @@ step_reward = -0.001
 arrival_reward = 1.0
 collision_reward = -0.5
 
-print(obstacles)
+# print(obstacles)

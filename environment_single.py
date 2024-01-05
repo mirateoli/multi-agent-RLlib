@@ -29,13 +29,19 @@ class EnvironmentSingle(gym.Env):
 
         self.path = [self.start] # list to store all locations of 
 
-        self.maxsteps = 10000
+        self.maxsteps = 500
 
-        self.obs_ranges = {
-            "x" : (obstacles[0], obstacles[1]),
-            "y" : (obstacles[2], obstacles[3]),
-            "z" : (obstacles[4], obstacles[5]),
-        }
+        try: obstacles
+        except NameError: obstacles = None
+
+        if obstacles is not None:
+            self.obs_ranges = {
+                "x" : (obstacles[0], obstacles[1]),
+                "y" : (obstacles[2], obstacles[3]),
+                "z" : (obstacles[4], obstacles[5]),
+            }
+        else:
+            self.obs_ranges = None
 
 
     def reset(self,*, seed=None, options=None):
@@ -43,7 +49,7 @@ class EnvironmentSingle(gym.Env):
         self.path = [self.start] # reset path to empty list
         self.agent.initialize() 
 
-        self.maxsteps = 10000
+        self.maxsteps = 500
 
         observation = {
             'agent_location': self.agent.get_position(),
@@ -70,16 +76,14 @@ class EnvironmentSingle(gym.Env):
             reward = 10
             terminated = True
             truncated = False
-        elif (self.agent.position[0] in range(self.obs_ranges["x"][0],self.obs_ranges["x"][1])) and\
-            (self.agent.position[1] in range(self.obs_ranges["y"][0],self.obs_ranges["y"][1])) and\
-            (self.agent.position[2] in range(self.obs_ranges["z"][0],self.obs_ranges["z"][1])):
-        # elif (self.agent.position[0] in self.obs_ranges["x"]) and\
-        #     (self.agent.position[1] in self.obs_ranges["y"]) and\
-        #     (self.agent.position[2] in self.obs_ranges["z"]):
-            reward = -10
-            terminated = False
-            truncated = False
-            # print("Agent moved through obstacle")
+        elif self.obs_ranges is not None:
+            if (self.agent.position[0] in range(self.obs_ranges["x"][0],self.obs_ranges["x"][1])) and\
+                (self.agent.position[1] in range(self.obs_ranges["y"][0],self.obs_ranges["y"][1])) and\
+                (self.agent.position[2] in range(self.obs_ranges["z"][0],self.obs_ranges["z"][1])):
+                reward = -10
+                terminated = False
+                truncated = False
+                # print("Agent moved through obstacle")
 
         else:
             reward = -0.05

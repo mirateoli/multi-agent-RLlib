@@ -1,19 +1,78 @@
+from ray.rllib.algorithms.ppo import PPO
+from ray.tune.logger import pretty_print
+from ray.tune.registry import register_env
+from environment_single import EnvironmentSingle
+from ray.rllib.algorithms.callbacks import DefaultCallbacks
+
 
 import numpy as np
+import os
+import ray
 
-obstacles = np.array([2,6,2,9,2,6])
+start_pt = np.array([4,1,4])
+end_pt = np.array([4,10,4])
 
-obs_ranges = {
-    "x" : [obstacles[0], obstacles[1]],
-    "y" : [obstacles[2], obstacles[3]],
-    "z" : [obstacles[4], obstacles[5]],
+# start_pt = np.array([2,4,4])
+# end_pt = np.array([4,6,6])
+
+# Choose what trained model to use based on train_ID
+train_ID = "Test11_3D_obs"
+
+checkpoint_dir = os.path.join('C:\\Users\\MDO-Disco\\Documents\\Thesis\\RLlib\\Checkpoints\\',train_ID)
+
+trained_checkpoint_path = os.path.join(checkpoint_dir, "final_checkpoint")
+
+def env_creator(env_config):
+    return EnvironmentSingle(env_config)
+
+register_env("SinglePipe", env_creator)
+
+env_config = {
+    "start_pt":start_pt,
+    "end_pt":end_pt,
 }
 
-position = [4,2,4]
+config = {
+    "env": "SinglePipe",
+    "env_config": env_config,
+    "num_gpus":1,
+    "num_workers": 1,
+    "num_envs_per_worker":5,
+    "framework": "torch",
+    "logger_config":{
+        "config":{
+            "log_level": "INFO",  # Set the log level
+            "log_format": {
+                "timesteps_total": "%6.3e",
+                "episode_reward_mean": "%8.3f",
 
-# print(obs_ranges["x"][0])
+            }
+        }           
+    }
+}
+# Test one episode
+print("TESTING NOW.......")
 
-if (position[0] in range(obs_ranges["x"][0],obs_ranges["x"][1])) and\
-            (position[1] in range(obs_ranges["y"][0],obs_ranges["y"][1])) and\
-            (position[2] in range(obs_ranges["z"][0],obs_ranges["z"][1])):
-                        print("True")
+test_config = config
+test_config["explore"]= False
+
+agent = PPO(config=test_config)
+agent.restore(trained_checkpoint_path)
+
+env = EnvironmentSingle(env_config)
+
+ # run until episode ends
+episode_reward = 0
+terminated = False
+obs, info = env.reset()
+print(obs)
+while not terminated:
+    action = agent.compute_single_action(obs)
+    obs, reward, terminated, truncated, info = env.step(action)
+    episode_reward += reward
+    print("agent moved")
+    print("current position",env.agent.get_position())
+
+print(env.path)
+env.render()
+
