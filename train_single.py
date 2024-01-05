@@ -13,9 +13,9 @@ import ray
 # end_pt = np.array([4,10,4])
 
 start_pt = np.array([0,0,0])
-end_pt = np.array([6,6,6])
+end_pt = np.array([5,5,5])
 
-train_ID = "Test13_3D_obs"
+train_ID = "Test15_3D_obs"
 
 class CustomCallbacks(DefaultCallbacks):
     def log_route(info):

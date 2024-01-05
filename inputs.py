@@ -9,7 +9,7 @@ x_length = 6
 y_length = 6
 z_length = 6
 
-grid_size = 7
+grid_size = 6
 
 grid_density = 1
 
@@ -24,7 +24,7 @@ start_pts = np.array([(3,0),(0,0)])
 
 num_pipes = 2
 
-num_directions = 18
+num_directions = 6
 
 step_reward = -0.001
 arrival_reward = 1.0

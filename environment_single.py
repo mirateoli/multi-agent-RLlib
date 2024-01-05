@@ -29,12 +29,14 @@ class EnvironmentSingle(gym.Env):
 
         self.path = [self.start] # list to store all locations of 
 
-        self.maxsteps = 500
+        self.maxsteps = 5000
 
         try: obstacles
         except NameError: obstacles = None
 
-        if obstacles is not None:
+        self.obstacles = obstacles
+
+        if self.obstacles is not None:
             self.obs_ranges = {
                 "x" : (obstacles[0], obstacles[1]),
                 "y" : (obstacles[2], obstacles[3]),
@@ -49,7 +51,7 @@ class EnvironmentSingle(gym.Env):
         self.path = [self.start] # reset path to empty list
         self.agent.initialize() 
 
-        self.maxsteps = 500
+        self.maxsteps = 5000
 
         observation = {
             'agent_location': self.agent.get_position(),
@@ -99,11 +101,14 @@ class EnvironmentSingle(gym.Env):
         pts = self.path
         ln = Line(pts)
         ln.color("red5").linewidth(5)
-        bounding_box = obstacles.tolist()
-        print(bounding_box)
-        box = Box(size=bounding_box)
-        box.color('g4')
-        show(Points(pts),ln,box,axes=1).close()
+        if self.obstacles is not None:
+            bounding_box = self.obstacles.tolist()
+            print(bounding_box)
+            box = Box(size=bounding_box)
+            box.color('g4')
+            show(Points(pts),ln,box,axes=1).close()
+        else:
+            show(Points(pts),ln,axes=1).close()
 
     def get_route(self):
         return self.path
