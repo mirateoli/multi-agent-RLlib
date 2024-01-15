@@ -29,12 +29,11 @@ class EnvironmentSingle(gym.Env):
 
         self.path = [self.start] # list to store all locations of 
 
-        self.maxsteps = 5000
+        self.maxsteps = 1000
 
-        try: obstacles
-        except NameError: obstacles = None
 
         self.obstacles = obstacles
+        print(self.obstacles)
 
         if self.obstacles is not None:
             self.obs_ranges = {
@@ -51,7 +50,7 @@ class EnvironmentSingle(gym.Env):
         self.path = [self.start] # reset path to empty list
         self.agent.initialize() 
 
-        self.maxsteps = 5000
+        self.maxsteps = 1000
 
         observation = {
             'agent_location': self.agent.get_position(),
@@ -72,23 +71,28 @@ class EnvironmentSingle(gym.Env):
         }
 
         if self.maxsteps <= 0:
+            reward = -0.1
             terminated = True
-            truncated = True
+            truncated = False
         elif (self.agent.position == self.agent.goal).all():
             reward = 10
             terminated = True
             truncated = False
         elif self.obs_ranges is not None:
-            if (self.agent.position[0] in range(self.obs_ranges["x"][0],self.obs_ranges["x"][1])) and\
-                (self.agent.position[1] in range(self.obs_ranges["y"][0],self.obs_ranges["y"][1])) and\
-                (self.agent.position[2] in range(self.obs_ranges["z"][0],self.obs_ranges["z"][1])):
-                reward = -10
+            if (self.agent.position[0] in range(self.obs_ranges["x"][0],self.obs_ranges["x"][1]+1)) and\
+                (self.agent.position[1] in range(self.obs_ranges["y"][0],self.obs_ranges["y"][1]+1)) and\
+                (self.agent.position[2] in range(self.obs_ranges["z"][0],self.obs_ranges["z"][1]+1)):
+                reward = -0.25
                 terminated = False
                 truncated = False
                 # print("Agent moved through obstacle")
+            else:
+                reward = -0.1
+                terminated = False
+                truncated = False
 
         else:
-            reward = -0.05
+            reward = -0.1
             terminated = False
             truncated = False
 
@@ -101,21 +105,21 @@ class EnvironmentSingle(gym.Env):
         pts = self.path
         ln = Line(pts)
         ln.color("red5").linewidth(5)
-        if self.obstacles is not None:
-            bounding_box = self.obstacles.tolist()
-            print(bounding_box)
-            box = Box(size=bounding_box)
-            box.color('g4')
-            show(Points(pts),ln,box,axes=1).close()
-        else:
-            show(Points(pts),ln,axes=1).close()
+        # if self.obstacles is not None:
+        bounding_box = self.obstacles.tolist()
+        box = Box(size=bounding_box)
+        box.color('g4')
+        box.opacity(0.5)
+        show(Points(pts),ln,box,axes=1).close()
+        # else:
+        #     show(Points(pts),ln,axes=1).close()
 
     def get_route(self):
         return self.path
 
 
 # start_pt = np.array([0,0,0])
-# end_pt = np.array([7,7,5])
+# end_pt = np.array([5,5,0])
 
 # env = EnvironmentSingle(config={"start_pt":start_pt, "end_pt":end_pt})
 # env.reset()
