@@ -75,4 +75,18 @@ class PipeAgent:
             self.position[Z] = 0.0
 
         return self.position
+    
+    def reverse(self, direction: int) -> None:
+
+        self.position = np.subtract(self.position, actions_key[direction])
+
+        return self.position
+
+# agent = PipeAgent(start_pt=(0,0,0), end_pt=(2,2,2))
+# agent.initialize()
+# print(agent.get_position())
+# agent.move(2)
+# print(agent.get_position())
+# agent.reverse(2)
+# print(agent.get_position())
 

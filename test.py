@@ -11,11 +11,11 @@ import ray
 
 # start_pt = np.array([4,1,4])
 # end_pt = np.array([4,10,4])
-start_pt = np.array([0,0,0])
-end_pt = np.array([5,5,0])
+start_pt = np.array([2,0,3])
+end_pt = np.array([9,3,2])
 
 # Choose what trained model to use based on train_ID
-train_ID = "Test18_3D_obs"
+train_ID = "Test38_3D_obs"
 
 checkpoint_dir = os.path.join('C:\\Users\\MDO-Disco\\Documents\\Thesis\\RLlib\\Checkpoints\\',train_ID)
 

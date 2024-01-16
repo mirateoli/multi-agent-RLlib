@@ -29,7 +29,7 @@ class EnvironmentSingle(gym.Env):
 
         self.path = [self.start] # list to store all locations of 
 
-        self.maxsteps = 1000
+        self.maxsteps = 2000
 
 
         self.obstacles = obstacles
@@ -50,7 +50,7 @@ class EnvironmentSingle(gym.Env):
         self.path = [self.start] # reset path to empty list
         self.agent.initialize() 
 
-        self.maxsteps = 1000
+        self.maxsteps = 2000
 
         observation = {
             'agent_location': self.agent.get_position(),
@@ -83,6 +83,7 @@ class EnvironmentSingle(gym.Env):
                 (self.agent.position[1] in range(self.obs_ranges["y"][0],self.obs_ranges["y"][1]+1)) and\
                 (self.agent.position[2] in range(self.obs_ranges["z"][0],self.obs_ranges["z"][1]+1)):
                 reward = -0.25
+                observation["agent_location"] = self.agent.reverse(action) #make agent go back to position before going into obstacle
                 terminated = False
                 truncated = False
                 # print("Agent moved through obstacle")
@@ -103,6 +104,8 @@ class EnvironmentSingle(gym.Env):
 
     def render(self):
         pts = self.path
+        key_pts = Points([self.start, self.goal])
+        key_pts.color("blue").ps(10)
         ln = Line(pts)
         ln.color("red5").linewidth(5)
         # if self.obstacles is not None:
@@ -110,7 +113,7 @@ class EnvironmentSingle(gym.Env):
         box = Box(size=bounding_box)
         box.color('g4')
         box.opacity(0.5)
-        show(Points(pts),ln,box,axes=1).close()
+        show(key_pts, Points(pts),ln,box,axes=1).close()
         # else:
         #     show(Points(pts),ln,axes=1).close()
 

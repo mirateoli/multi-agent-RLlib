@@ -12,13 +12,13 @@ import ray
 # start_pt = np.array([4,1,4])
 # end_pt = np.array([4,10,4])
 
-# start_pt = np.array([8,3,8])
-# end_pt = np.array([17,8,6])
+start_pt = np.array([2,0,3])
+end_pt = np.array([9,3,2])
 
-start_pt = np.array([0,0,0])
-end_pt = np.array([19,19,19])
+# start_pt = np.array([0,0,0])
+# end_pt = np.array([19,19,19])
 
-train_ID = "Test30_3D_obs"
+train_ID = "Test38_3D_obs"
 
 class CustomCallbacks(DefaultCallbacks):
     def log_route(info):
@@ -46,7 +46,8 @@ config = {
     "env": "SinglePipe",
     "env_config": env_config,
     "train_batch_size":4000,
-    "lr": 1e-6,
+    "lr": 5e-5,
+    "entropy_coeff": 0.1,
     "num_gpus":1,
     "num_workers": 1,
     "num_envs_per_worker":5,
@@ -66,7 +67,7 @@ config = {
 
 trainer = PPO(config=config)
 
-for i in range(100):
+for i in range(200):
     result = trainer.train()
     # print(pretty_print(result))
     checkpoint_path = os.path.join(checkpoint_dir, f"checkpoint_{i}")

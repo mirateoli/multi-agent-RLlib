@@ -3,16 +3,16 @@ import numpy as np
 
 # obstacle_box = np.array([(2,2,2),(2,2,6),(2,6,6),(6,6,6),(6,2,2),(6,2,6),(2,6,2),(6,6,2)])
 
-obstacles = np.array([5,15,5,15,5,10])  # bounding box (xmin,xmax,ymin,ymax,zmin,zmax)
+obstacles = np.array([1,8,1,5,1,5])  # bounding box (xmin,xmax,ymin,ymax,zmin,zmax)
 
 try: obstacles
 except NameError: obstacles = None
 
-x_length = 20
-y_length = 20
-z_length = 20
+x_length = 10
+y_length = 10
+z_length = 10
 
-grid_size = 20
+grid_size = 10
 
 grid_density = 1
 
