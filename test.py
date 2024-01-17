@@ -15,7 +15,7 @@ start_pt = np.array([2,0,3])
 end_pt = np.array([9,3,2])
 
 # Choose what trained model to use based on train_ID
-train_ID = "Test38_3D_obs"
+train_ID = "Test39_3D_obs"
 
 checkpoint_dir = os.path.join('C:\\Users\\MDO-Disco\\Documents\\Thesis\\RLlib\\Checkpoints\\',train_ID)
 
