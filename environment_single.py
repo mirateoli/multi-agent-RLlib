@@ -25,11 +25,23 @@ class EnvironmentSingle(gym.Env):
     
     def __init__(self,config: EnvContext):
         super().__init__()
-        self.start = randint(0, grid_size, 3)
-        self.goal = randint(0, grid_size, 3)
-        self.agent = PipeAgent(self.start,self.goal)
 
+        self.train = config["train"]
+
+        # if training, randomize start and end points
+        if self.train:
+            self.start = randint(0, grid_size, 3)
+            self.goal = randint(0, grid_size, 3)
+        # if testing, use defined start and end points
+        else:
+            self.start = config["start_pt"]
+            self.goal = config["end_pt"]
+
+        self.agent = PipeAgent(self.start,self.goal)
         
+        self.last_action = None
+        self.bends = 0
+
         self.observation_space = agent_obs_space
         self.action_space = agent_action_space
 
@@ -57,6 +69,9 @@ class EnvironmentSingle(gym.Env):
         self.goal = randint(0, grid_size, 3)
         self.agent = PipeAgent(self.start,self.goal)
 
+        self.last_action = None
+        self.bends = 0
+
         self.path = [self.start] # reset path to empty list
         self.agent.initialize() 
 
@@ -74,20 +89,29 @@ class EnvironmentSingle(gym.Env):
         observation, reward, terminated, truncated, info, = {}, {}, {}, {}, {}
 
         self.maxsteps -= 1
-        
+
         observation = {
             'agent_location': self.agent.move(action),
             'goal_position': self.agent.goal
         }
 
+        # check if max steps reached
         if self.maxsteps <= 0:
             reward = -0.1
             terminated = True
             truncated = False
+        # check if agent reached its goal
         elif (self.agent.position == self.agent.goal).all():
             reward = 10
             terminated = True
             truncated = False
+        # check if agent changed directions (bend)
+        elif self.last_action != None:
+            if (np.cross(actions_key[self.last_action], actions_key[action])).any() != 0:
+                self.bends += 1
+                reward = -1
+            else:
+                reward = -0.1
         # elif self.obs_ranges is not None:
         #     if (self.agent.position[0] in range(self.obs_ranges["x"][0],self.obs_ranges["x"][1]+1)) and\
         #         (self.agent.position[1] in range(self.obs_ranges["y"][0],self.obs_ranges["y"][1]+1)) and\
@@ -101,13 +125,14 @@ class EnvironmentSingle(gym.Env):
             #     reward = -0.1
             #     terminated = False
             #     truncated = False
-
+        # if no other criteria met, give agent penalty for taking a step
         else:
             reward = -0.1
             terminated = False
             truncated = False
 
-        self.path.append(self.agent.position)
+        self.path.append(self.agent.position) # add to list of path locations
+        self.last_action = action #set last_action to current action 
 
         return observation, reward, terminated, truncated, info
 
@@ -126,6 +151,7 @@ class EnvironmentSingle(gym.Env):
         show(key_pts, Points(pts),ln, axes=1).close()
         # else:
         #     show(Points(pts),ln,axes=1).close()
+        print(self.bends)
 
     def get_route(self):
         return self.path
@@ -143,6 +169,15 @@ class EnvironmentSingle(gym.Env):
 # print(env.path)
 # env.render()
 # env.step(action=0)
+# print(env.path)
+# env.render()
+# env.step(action=2)
+# print(env.path)
+# env.render()
+# env.step(action=1)
+# print(env.path)
+# env.render()
+# env.step(action=3)
 # print(env.path)
 # env.render()
 # # print(env.action_space)

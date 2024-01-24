@@ -18,7 +18,7 @@ end_pt = np.array([9,3,2])
 # start_pt = np.array([0,0,0])
 # end_pt = np.array([19,19,19])
 
-train_ID = "Test40_3D_obs"
+train_ID = "Test43_3D_bends"
 
 class CustomCallbacks(DefaultCallbacks):
     def log_route(info):
@@ -38,6 +38,7 @@ def env_creator(env_config):
 register_env("SinglePipe", env_creator)
 
 env_config = {
+    "train": True,
     "start_pt":start_pt,
     "end_pt":end_pt,
 }
