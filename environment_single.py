@@ -65,8 +65,15 @@ class EnvironmentSingle(gym.Env):
             
     def reset(self,*, seed=None, options=None):
 
-        self.start = randint(0, grid_size, 3)
-        self.goal = randint(0, grid_size, 3)
+        # if training, randomize start and end points
+        if self.train:
+            self.start = randint(0, grid_size, 3)
+            self.goal = randint(0, grid_size, 3)
+        # if testing, use defined start and end points
+        else:
+            self.start = self.start
+            self.goal = self.goal
+
         self.agent = PipeAgent(self.start,self.goal)
 
         self.last_action = None
@@ -107,7 +114,8 @@ class EnvironmentSingle(gym.Env):
             truncated = False
         # check if agent changed directions (bend)
         elif self.last_action != None:
-            if (np.cross(actions_key[self.last_action], actions_key[action])).any() != 0:
+            if (np.cross(actions_key[self.last_action], 
+                         actions_key[action])).any() != 0:
                 self.bends += 1
                 reward = -1
             else:
