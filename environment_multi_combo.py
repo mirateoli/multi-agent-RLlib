@@ -32,6 +32,7 @@ class Environment(MultiAgentEnv):
     def reset(self,*, seed=None, options=None):
         super().reset(seed=seed)
 
+        infos = {}
         self.resetted = True
         self.terminateds = set()
         self.truncateds = set()
@@ -50,27 +51,41 @@ class Environment(MultiAgentEnv):
         return observations, infos
 
     def step(self, action_dict):
-        observation, reward, terminated, truncated, info, = {}, {}, {}, {}, {}
+        observations, rewards, terminateds, truncateds, info, = {}, {}, {}, {}, {}
         
+        agent_ids = action_dict.keys()
 
-        for i, agent in enumerate(self.agents):
-            print(i)
-            print(action_dict[i])
-            observation[i] = {
-                'agent_location': agent.agent.move(action_dict[i]),
-                'goal_position': agent.goal
-            }
-            if (agent.agent.position == agent.goal).all():
-                reward[i] = 10
-                terminated[i] = True
-                truncated[i] = False
-            else:
-                reward[i] = -0.1
-                terminated[i] = False
-                truncated[i] = False
-        terminated["__all__"] = len(self.terminateds) == len(self.agents)
-        truncated["__all__"] = len(self.truncateds) == len(self.agents)
-        return observation, reward, terminated, truncated, info
+        for agent_id in agent_ids:
+            print(self.agents[agent_id])
+            # self.agents[agent_id].move(action_dict[agent_id])
+
+
+        observations = {i: self.get_observation(i) for i in agent_ids}
+        rewards = {i: self.get_reward(i) for i in agent_ids}
+        terminateds = {i: self.is_terminated(i) for i in agent_ids}
+        truncateds = {i: False for i in agent_ids}
+
+        terminateds["__all__"] = all(terminateds.values())
+        truncateds["__all__"] = all(terminateds.values())
+
+        # for i, agent in enumerate(self.agents):
+        #     print(i)
+        #     # print(action_dict[i])
+        #     observation[i] = {
+        #         'agent_location': agent.agent.move(action_dict[i]),
+        #         'goal_position': agent.goal
+        #     }
+        #     if (agent.agent.position == agent.goal).all():
+        #         reward[i] = 10
+        #         terminated[i] = True
+        #         truncated[i] = False
+        #     else:
+        #         reward[i] = -0.1
+        #         terminated[i] = False
+        #         truncated[i] = False
+        # terminated["__all__"] = len(self.terminateds) == len(self.agents)
+        # truncated["__all__"] = len(self.truncateds) == len(self.agents)
+        return observations, rewards, terminateds, truncateds, info
 
 
     def render(self):
@@ -79,29 +94,39 @@ class Environment(MultiAgentEnv):
     def close(self):
         pass
 
-# env = Environment(config={"num_pipes":num_pipes, "start_pts":start_pts, "end_pts":end_pts})
-# # print(env._agent_ids)
-# # ids = env.get_agent_ids()
-# # print(ids)
+    def get_observation(self, agent_id):
+        return {
+                'agent_location': self.agents[agent_id].get_position(),
+                'goal_position': self.agents[agent_id].goal
+                }
+    def get_reward(self, agent_id):
+        if(self.agents[agent_id].position == self.agents[agent_id].goal).all():
+            reward = 10
 
-# # print(env.action_space)
-# # print(env.observation_space)
+        else:
+            reward = -0.1
+
+        return reward
+    
+    def is_terminated(self, agent_id):
+        if(self.agents[agent_id].position == self.agents[agent_id].goal).all():
+            terminated = True
+        else:
+            terminated = False
+        return terminated
 
 
-# print(env.action_space)
-# print(env.action_space.sample())
-# print(env.action_space_sample())
+env = Environment(config={"num_pipes":num_pipes, "start_pts":start_pts, "end_pts":end_pts})
 
-# print(env.observation_space)
-# print(env.observation_space_sample())
+obs = env.reset()
+print(obs)
 
-# check_env(env)
+while True:
+    obs, rew, done, info = env.step(
+        {1: env.action_space.sample(), 2: env.action_space.sample()}
+    )
+    # time.sleep(0.1)
+    env.render()
+    if any(done.values()):
+        break
 
-
-# ray.rllib.utils.check_env(env)
-# obs,infos = env.reset()
-# print(obs)
-
-# actions = {0:2,1:2}
-# obs = env.step(actions)
-# print(obs)

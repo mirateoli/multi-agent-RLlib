@@ -33,7 +33,7 @@ class EnvironmentSingle(gym.Env):
 
 
         self.obstacles = obstacles
-        print(self.obstacles)
+        # print(self.obstacles)
 
         if self.obstacles is not None:
             self.obs_ranges = {
