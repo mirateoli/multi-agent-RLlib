@@ -8,11 +8,11 @@ obstacles = np.array([1,8,1,5,1,5])  # bounding box (xmin,xmax,ymin,ymax,zmin,zm
 try: obstacles
 except NameError: obstacles = None
 
-x_length = 10
-y_length = 10
-z_length = 10
+x_length = 4
+y_length = 4
+z_length = 4
 
-grid_size = 10
+grid_size = 4
 
 grid_density = 1
 
@@ -22,8 +22,8 @@ X = 0
 Y = 1
 Z = 2
 
-end_pts = np.array([(4,0),(0,3)])
-start_pts = np.array([(3,0),(0,0)])
+end_pts = np.array([(4,0,0),(0,0,3)])
+start_pts = np.array([(3,0,0),(0,0,0)])
 
 num_pipes = 2
 
