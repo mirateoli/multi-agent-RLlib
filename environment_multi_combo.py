@@ -111,7 +111,8 @@ class Environment(MultiAgentEnv):
     
 
 
-env = Environment(config={"num_pipes":num_pipes, "start_pts":start_pts, "end_pts":end_pts})
+# env = Environment(config={"num_pipes":num_pipes, "start_pts":start_pts, "end_pts":end_pts})
+# env.reset()
 
 # obs, info = env.reset()
 # print(obs)
@@ -135,13 +136,13 @@ env = Environment(config={"num_pipes":num_pipes, "start_pts":start_pts, "end_pts
 #         {0: 2, 1: 0}
 #     )
 # print(terminateds)
-while True:
-    obs, rew, terminateds, truncateds, info = env.step(
-        {0: env.action_space.sample(), 1: env.action_space.sample()}
-    )
-    # time.sleep(0.1)
+# while True:
+#     obs, rew, terminateds, truncateds, info = env.step(
+#         {0: env.action_space.sample(), 1: env.action_space.sample()}
+#     )
+#     # time.sleep(0.1)
     
-    if any(terminateds.values()):
-        break
+#     if any(terminateds.values()):
+#         break
 
-env.render()
+# env.render()

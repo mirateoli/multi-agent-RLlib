@@ -45,7 +45,7 @@ trainer = PPO(config=config)
 
 # trainer.train()
 
-for i in range(100):
+for i in range(20):
     result = trainer.train()
     # print(pretty_print(result))
     checkpoint_path = os.path.join(checkpoint_dir, f"checkpoint_{i}")
@@ -76,9 +76,12 @@ terminated = False
 obs, info = env.reset()
 print(obs)
 while not terminated:
-    action = agent.compute_single_action(obs)
+    action = {}
+    for agent_id, agent_obs in obs.items():
+        action[agent_id] = agent.compute_single_action(agent_obs)
     obs, reward, terminated, truncated, info = env.step(action)
-    episode_reward += reward
+    terminated = terminated['__all__']
+    episode_reward += sum(reward.values())
     # print("agent moved")
     # print("current position",env.agents.get_position())
 
