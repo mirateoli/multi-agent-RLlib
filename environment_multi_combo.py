@@ -1,6 +1,7 @@
 from typing import Dict
 
 import ray
+import copy
 
 from ray.rllib import MultiAgentEnv
 from ray.rllib.env import EnvContext
@@ -35,6 +36,9 @@ class Environment(MultiAgentEnv):
     def reset(self,*, seed=None, options=None):
         super().reset(seed=seed)
 
+        self.active_agents = copy.deepcopy(self._agent_ids)
+        self.paths = {i: np.array([self.start_pts[i]]) for i in range(self.num_agents)}
+
         # print("Environment Reset")
         self.maxsteps = 100
         info = {}
@@ -59,15 +63,19 @@ class Environment(MultiAgentEnv):
             self.agents[i].move(action)
 
 
-        observations = {i: self.get_observation(i) for i in self._agent_ids}
+        observations = {i: self.get_observation(i) for i in self.active_agents}
         rewards = {i: self.get_reward(i) for i in self._agent_ids}
-        terminateds_check = {i: self.is_terminated(i) for i in self._agent_ids} # changed to try to debug
-        truncateds = {i: False for i in self._agent_ids}
+        terminateds = {i: self.is_terminated(i) for i in self.active_agents} # changed to try to debug
+        truncateds = {i: self.maxsteps <= 0 for i in self._agent_ids}
 
-        terminateds["__all__"] = all(terminateds_check.values())
-        truncateds["__all__"] = all(terminateds.values())
+        terminateds["__all__"] = all(terminateds.values())
+        truncateds["__all__"] = all(truncateds.values())
 
-        self.paths = {i: np.vstack((self.paths[i],self.agents[i].get_position())) for i in range(self.num_agents)}
+        self.paths = {i: np.vstack((self.paths[i],self.agents[i].get_position())) for i in self._agent_ids}
+
+        # remove agent from active agents if terminated is true
+        # Remove agent from active_agents if terminated is true
+        self.active_agents = [agent_id for agent_id in self.active_agents if not terminateds[agent_id]]
 
         # print("Observations:",observations,"\nTerminateds:", terminateds, "\nSteps left:",self.maxsteps)
         return observations, rewards, terminateds, truncateds, info
@@ -101,41 +109,49 @@ class Environment(MultiAgentEnv):
         return reward
     
     def is_terminated(self, agent_id):
-        if self.maxsteps < 0:
-            terminated = True
-        elif(self.agents[agent_id].position == self.agents[agent_id].goal).all():
+        # if self.maxsteps < 0:
+        #     terminated = True
+        if(self.agents[agent_id].position == self.agents[agent_id].goal).all():
             terminated = True
         else:
             terminated = False
         return terminated
     
-
+    def remove_agent(self, agent_id):
+        self.active_agents.remove(agent_id)
 
 # env = Environment(config={"num_pipes":num_pipes, "start_pts":start_pts, "end_pts":end_pts})
-# env.reset()
 
 # obs, info = env.reset()
 # print(obs)
+# print(env._agent_ids)
+# print(env.maxsteps)
 # obs, rew, terminateds, truncateds, info = env.step(
 #         {0: 2, 1: 0}
 #     )
+# print(obs)
 # print(terminateds)
+# print(env.maxsteps)
 # obs, rew, terminateds, truncateds, info = env.step(
 #         {0: 2, 1: 0}
 #     )
+# print(obs)
 # print(terminateds)
+# print(env.maxsteps)
+
+# obs, rew, terminateds, truncateds, info = env.step(
+#         {0: 2, 1: 0}
+#     )
+# print(obs)
+# print(env.maxsteps)
 # obs, rew, terminateds, truncateds, info = env.step(
 #         {0: 2, 1: 1}
 #     )
 # print(terminateds)
-# obs, rew, terminateds, truncateds, info = env.step(
-#         {0: 2, 1: 0}
-#     )
-# print(terminateds)
-# obs, rew, terminateds, truncateds, info = env.step(
-#         {0: 2, 1: 0}
-#     )
-# print(terminateds)
+# obs, info = env.reset()
+# print(obs)
+# print(env._agent_ids)
+# print(env.maxsteps)
 # while True:
 #     obs, rew, terminateds, truncateds, info = env.step(
 #         {0: env.action_space.sample(), 1: env.action_space.sample()}

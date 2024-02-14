@@ -22,7 +22,7 @@ X = 0
 Y = 1
 Z = 2
 
-end_pts = np.array([(3,0,0),(0,3,0)])
+end_pts = np.array([(3,0,3),(0,3,2)])
 start_pts = np.array([(0,0,0),(0,0,0)])
 
 num_pipes = 2
