@@ -71,7 +71,10 @@ class Environment(MultiAgentEnv):
         terminateds["__all__"] = all(terminateds.values())
         truncateds["__all__"] = all(truncateds.values())
 
-        self.paths = {i: np.vstack((self.paths[i],self.agents[i].get_position())) for i in self._agent_ids}
+        #TODO only add to path if agent was active
+        for i in self.active_agents:
+            self.paths[i] = np.vstack((self.paths[i],self.agents[i].get_position()))
+
 
         # remove agent from active agents if terminated is true
         # Remove agent from active_agents if terminated is true
@@ -123,26 +126,20 @@ class Environment(MultiAgentEnv):
 # env = Environment(config={"num_pipes":num_pipes, "start_pts":start_pts, "end_pts":end_pts})
 
 # obs, info = env.reset()
-# print(obs)
-# print(env._agent_ids)
-# print(env.maxsteps)
-# obs, rew, terminateds, truncateds, info = env.step(
-#         {0: 2, 1: 0}
-#     )
-# print(obs)
-# print(terminateds)
-# print(env.maxsteps)
-# obs, rew, terminateds, truncateds, info = env.step(
-#         {0: 2, 1: 0}
-#     )
-# print(obs)
-# print(terminateds)
-# print(env.maxsteps)
 
 # obs, rew, terminateds, truncateds, info = env.step(
 #         {0: 2, 1: 0}
 #     )
-# print(obs)
+
+# obs, rew, terminateds, truncateds, info = env.step(
+#         {0: 2, 1: 0}
+#     )
+
+
+# obs, rew, terminateds, truncateds, info = env.step(
+#         {0: 2, 1: 0}
+#     )
+
 # print(env.maxsteps)
 # obs, rew, terminateds, truncateds, info = env.step(
 #         {0: 2, 1: 1}
