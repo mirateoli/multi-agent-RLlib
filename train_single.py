@@ -18,7 +18,7 @@ end_pt = np.array([9,3,2])
 # start_pt = np.array([0,0,0])
 # end_pt = np.array([19,19,19])
 
-train_ID = "Test38_3D_obs"
+train_ID = "Test43_3D_bends"
 
 class CustomCallbacks(DefaultCallbacks):
     def log_route(info):
@@ -38,6 +38,7 @@ def env_creator(env_config):
 register_env("SinglePipe", env_creator)
 
 env_config = {
+    "train": True,
     "start_pt":start_pt,
     "end_pt":end_pt,
 }
@@ -45,7 +46,7 @@ env_config = {
 config = {
     "env": "SinglePipe",
     "env_config": env_config,
-    "train_batch_size":4000,
+    "train_batch_size":20000,
     "lr": 5e-5,
     "entropy_coeff": 0.1,
     "num_gpus":1,
@@ -67,7 +68,7 @@ config = {
 
 trainer = PPO(config=config)
 
-for i in range(200):
+for i in range(100):
     result = trainer.train()
     # print(pretty_print(result))
     checkpoint_path = os.path.join(checkpoint_dir, f"checkpoint_{i}")
