@@ -8,11 +8,11 @@ import numpy as np
 # try: obstacles
 # except NameError: obstacles = None
 
-x_length = 20
-y_length = 20
-z_length = 20
+x_length = 6
+y_length = 6
+z_length = 6
 
-grid_size = 20
+grid_size = 6
 
 grid_density = 1
 
@@ -22,12 +22,13 @@ X = 0
 Y = 1
 Z = 2
 
-end_pts = np.array([(4,0),(0,3)])
-start_pts = np.array([(3,0),(0,0)])
+start_pts = np.array([(0,0,0),(3,0,0),(5,0,0)])
+end_pts = np.array([(0,5,5),(3,5,5),(5,5,5)])
 
-num_pipes = 2
 
-num_directions = 6
+num_pipes = 3
+
+num_directions = 18
 
 step_reward = -0.001
 arrival_reward = 1.0

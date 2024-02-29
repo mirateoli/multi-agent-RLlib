@@ -50,8 +50,17 @@ class EnvironmentSingle(gym.Env):
         self.maxsteps = 10000
 
 
-        # self.obstacles = obstacles
-        # # print(self.obstacles)
+        self.obstacles = obstacles
+        # print(self.obstacles)
+
+        if self.obstacles is not None:
+            self.obs_ranges = {
+                "x" : (obstacles[0], obstacles[1]),
+                "y" : (obstacles[2], obstacles[3]),
+                "z" : (obstacles[4], obstacles[5]),
+            }
+        else:
+            self.obs_ranges = None
 
         # if self.obstacles is not None:
         #     self.obs_ranges = {
