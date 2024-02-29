@@ -89,10 +89,12 @@ class Environment(MultiAgentEnv):
         key_pts = {i: Points([self.start_pts[i],self.end_pts[i]]) for i in range(self.num_agents)}                    
         key_pts[0].color("blue").ps(10)
         key_pts[1].color("orange").ps(10)
+        key_pts[2].color("red5").ps(10)
         ln = {i: Line(pts[i]) for i in range(self.num_agents)}
         ln[0].color("red5").linewidth(5)
         ln[1].color("yellow").linewidth(5)
-        show(key_pts[0], key_pts[1], Points(pts[0]),Points(pts[1]),ln[0], ln[1],axes=1).close()
+        ln[2].color("blue").linewidth(5)
+        show(key_pts[0], key_pts[1],key_pts[2] ,Points(pts[0]),Points(pts[1]),Points(pts[2]),ln[0], ln[1],ln[2],axes=1).close()
 
     def close(self):
         pass

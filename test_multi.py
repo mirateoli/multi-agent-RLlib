@@ -10,11 +10,12 @@ import os
 
 from spaces import agent_action_space, agent_obs_space
 
-train_ID = "MultiAgent_13_Diag"
+# Choose what trained model to use based on train_ID
+train_ID = "MultiAgent_12_Diag"
 
 checkpoint_dir = os.path.join('C:\\Users\\MDO-Disco\\Documents\\Thesis\\RLlib\\Checkpoints\\',train_ID)
-# Create the directory if it doesn't exist
-os.makedirs(checkpoint_dir, exist_ok=True)
+
+trained_checkpoint_path = os.path.join(checkpoint_dir, "final_checkpoint")
 
 def env_creator(env_config):
     return Environment(env_config)
@@ -41,29 +42,13 @@ config = {
     "action_space": agent_action_space,
     }         
 
-trainer = PPO(config=config)
-
-# trainer.train()
-
-for i in range(80):
-    result = trainer.train()
-    # print(pretty_print(result))
-    checkpoint_path = os.path.join(checkpoint_dir, f"checkpoint_{i}")
-    os.makedirs(checkpoint_path, exist_ok=True)
-    checkpoint = trainer.save_checkpoint(checkpoint_path)  # Save checkpoint to specified directory
-    print(f"Iteration {i+1}: {pretty_print(result)}") 
-
-# Save the final trained model to the specified directory
-trained_checkpoint_path = os.path.join(checkpoint_dir, "final_checkpoint")
-os.makedirs(trained_checkpoint_path, exist_ok=True)
-trained_checkpoint = trainer.save_checkpoint(trained_checkpoint_path)
-print(f"Final model saved at:", trained_checkpoint_path)
 
 # Test one episode
 print("TESTING NOW.......")
 
 test_config = config
 test_config["explore"]= False
+test_config["entropy_coeff"]= 0
 
 agent = PPO(config=test_config)
 agent.restore(trained_checkpoint_path)
@@ -87,3 +72,4 @@ while not terminated:
 
 print(env.paths )
 env.render()
+
