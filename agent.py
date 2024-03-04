@@ -15,18 +15,18 @@ actions_key = {
     3 : (-1,0,0), # West
     4 : (0,0,1),  # Up
     5 : (0,0,-1),  # Down
-    6 : (1,1,0),  # North-East
-    7 : (1,-1,0), # North-West
-    8 : (-1,1,0), # South-East
-    9 : (-1,-1,0), # South-West
-    10: (0,1,1),   # Up-North
-    11: (0,1,-1),  # Down-North
-    12: (0,-1,1),   # Up-South
-    13: (0,-1,-1),  # Down-South
-    14: (1,0,1),   # Up-East
-    15: (1,0,-1),  # Down-East
-    16: (-1,0,1),   # Up-West
-    17: (-1,0,-1),  # Down-West
+    # 6 : (1,1,0),  # North-East
+    # 7 : (1,-1,0), # North-West
+    # 8 : (-1,1,0), # South-East
+    # 9 : (-1,-1,0), # South-West
+    # 10: (0,1,1),   # Up-North
+    # 11: (0,1,-1),  # Down-North
+    # 12: (0,-1,1),   # Up-South
+    # 13: (0,-1,-1),  # Down-South
+    # 14: (1,0,1),   # Up-East
+    # 15: (1,0,-1),  # Down-East
+    # 16: (-1,0,1),   # Up-West
+    # 17: (-1,0,-1),  # Down-West
     # 18: (1,1,1),   # Up-North-East
     # 19: (1,1,-1),  # Down-North-East
     # 20: (-1,1,1),   # Up-North-West
@@ -81,6 +81,9 @@ class PipeAgent:
         self.position = np.subtract(self.position, actions_key[direction])
 
         return self.position
+    
+    def distance_to_goal(self):
+        return np.array([np.abs(np.linalg.norm(self.position - self.goal))])
 
 # agent = PipeAgent(start_pt=(0,0,0), end_pt=(2,2,2))
 # agent.initialize()

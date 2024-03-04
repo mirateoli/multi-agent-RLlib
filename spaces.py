@@ -29,9 +29,17 @@ agent_goal_space = spaces.Box(
     high=grid_size
 )
 
+agent_distance_to_goal_space = spaces.Box(
+    shape=(1,),
+    dtype=float,
+    low=0.0,
+    high = grid_size*grid_size,
+)
+
 agent_obs_space = spaces.Dict({
     'agent_location': agent_self_space,
-    'goal_position': agent_goal_space
+    'goal_position': agent_goal_space,
+    'distance_to_goal': agent_distance_to_goal_space
 })
 
 agent_action_space = spaces.Discrete(num_directions)

@@ -1,4 +1,5 @@
 from typing import Dict
+from numpy.random import randint
 
 import ray
 import copy
@@ -19,10 +20,22 @@ class Environment(MultiAgentEnv):
     
     def __init__(self, config: EnvContext):
         super().__init__()
+
+        
+        self.train = config["train"]
         self.num_pipes = config["num_pipes"]
-        self.start_pts = config["start_pts"]
-        self.end_pts = config["end_pts"]
         self.num_agents = self.num_pipes
+
+        # if training, randomize start and end points
+        if self.train:
+            self.start_pts = randint(0, grid_size, size=(self.num_agents, 3))
+            self.end_pts = randint(0, grid_size, size=(self.num_agents, 3))
+        # if testing, use defined start and end points
+        else:
+            self.start_pts = config["start_pts"]
+            self.end_pts = config["end_pts"]
+        
+
         self.agents = [PipeAgent(self.start_pts[i], self.end_pts[i]) for i in range(self.num_agents)]
         self._agent_ids = set(range(num_pipes))
         self.terminateds = set()
@@ -36,6 +49,17 @@ class Environment(MultiAgentEnv):
     def reset(self,*, seed=None, options=None):
         super().reset(seed=seed)
 
+        # if training, randomize start and end points
+        if self.train:
+            self.start_pts = randint(0, grid_size, size=(self.num_agents, 3))
+            self.end_pts = randint(0, grid_size, size=(self.num_agents, 3))
+        # if testing, use defined start and end points
+        else:
+            self.start_pts = self.start_pts
+            self.end_pts = self.end_pts
+
+        self.agents = [PipeAgent(self.start_pts[i], self.end_pts[i]) for i in range(self.num_agents)]
+
         self.active_agents = copy.deepcopy(self._agent_ids)
         self.paths = {i: np.array([self.start_pts[i]]) for i in range(self.num_agents)}
 
@@ -48,7 +72,8 @@ class Environment(MultiAgentEnv):
         for i, agent in enumerate(self.agents):
             observations[i] = {
                 'agent_location': agent.get_position(),
-                'goal_position': agent.goal
+                'goal_position': agent.goal,
+                'distance_to_goal': agent.distance_to_goal()
             }
 
         info = {agent: {} for agent in self.agents}
@@ -80,6 +105,7 @@ class Environment(MultiAgentEnv):
         # Remove agent from active_agents if terminated is true
         self.active_agents = [agent_id for agent_id in self.active_agents if not terminateds[agent_id]]
 
+
         # print("Observations:",observations,"\nTerminateds:", terminateds, "\nSteps left:",self.maxsteps)
         return observations, rewards, terminateds, truncateds, info
 
@@ -89,12 +115,12 @@ class Environment(MultiAgentEnv):
         key_pts = {i: Points([self.start_pts[i],self.end_pts[i]]) for i in range(self.num_agents)}                    
         key_pts[0].color("blue").ps(10)
         key_pts[1].color("orange").ps(10)
-        key_pts[2].color("red5").ps(10)
+        # key_pts[2].color("red5").ps(10)
         ln = {i: Line(pts[i]) for i in range(self.num_agents)}
         ln[0].color("red5").linewidth(5)
         ln[1].color("yellow").linewidth(5)
-        ln[2].color("blue").linewidth(5)
-        show(key_pts[0], key_pts[1],key_pts[2] ,Points(pts[0]),Points(pts[1]),Points(pts[2]),ln[0], ln[1],ln[2],axes=1).close()
+        # ln[2].color("blue").linewidth(5)
+        show(key_pts[0], key_pts[1],Points(pts[0]),Points(pts[1]),ln[0], ln[1],axes=1).close()
 
     def close(self):
         pass
@@ -102,14 +128,15 @@ class Environment(MultiAgentEnv):
     def get_observation(self, agent_id):
         return {
                 'agent_location': self.agents[agent_id].get_position(),
-                'goal_position': self.agents[agent_id].goal
+                'goal_position': self.agents[agent_id].goal,
+                'distance_to_goal': self.agents[agent_id].distance_to_goal()
                 }
     def get_reward(self, agent_id):
         if(self.agents[agent_id].position == self.agents[agent_id].goal).all():
             reward = 10
 
         else:
-            reward = -0.1
+            reward = -0.5
 
         return reward
     
@@ -125,9 +152,21 @@ class Environment(MultiAgentEnv):
     def remove_agent(self, agent_id):
         self.active_agents.remove(agent_id)
 
-# env = Environment(config={"num_pipes":num_pipes, "start_pts":start_pts, "end_pts":end_pts})
+# env = Environment(config={"train":True,"num_pipes":num_pipes, "start_pts":start_pts, "end_pts":end_pts})
 
 # obs, info = env.reset()
+# print(obs)
+
+# print("sample:",env.observation_space.sample())
+
+# for agent_id, agent_observation in obs.items():
+#         for key, value in agent_observation.items():
+#             space = env.observation_space[key]
+#             print(space)
+#             print(value)
+#             if not space.contains(value):
+#                 raise ValueError(f"Agent {agent_id}, Observation '{key}' is outside the defined space: {value}")
+
 
 # obs, rew, terminateds, truncateds, info = env.step(
 #         {0: 2, 1: 0}

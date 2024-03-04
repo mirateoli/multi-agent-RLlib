@@ -11,7 +11,7 @@ import os
 from spaces import agent_action_space, agent_obs_space
 
 # Choose what trained model to use based on train_ID
-train_ID = "MultiAgent_12_Diag"
+train_ID = "MultiAgent_Generalize_8"
 
 checkpoint_dir = os.path.join('C:\\Users\\MDO-Disco\\Documents\\Thesis\\RLlib\\Checkpoints\\',train_ID)
 
@@ -23,6 +23,7 @@ def env_creator(env_config):
 register_env("MultiPipe", env_creator)
 
 env_config = {
+    "train": True,
     "num_pipes": num_pipes,
     "start_pts":start_pts,
     "end_pts":end_pts,
@@ -60,12 +61,13 @@ episode_reward = 0
 terminated = False
 obs, info = env.reset()
 print(obs)
-while not terminated:
+while not terminated or truncated:
     action = {}
     for agent_id, agent_obs in obs.items():
         action[agent_id] = agent.compute_single_action(agent_obs)
     obs, reward, terminated, truncated, info = env.step(action)
     terminated = terminated['__all__']
+    truncated = truncated['__all__']
     episode_reward += sum(reward.values())
     # print("agent moved")
     # print("current position",env.agents.get_position())
