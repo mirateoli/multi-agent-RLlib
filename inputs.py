@@ -7,11 +7,11 @@ obstacles = np.array([1,8,1,5,1,5])  # bounding box (xmin,xmax,ymin,ymax,zmin,zm
 # try: obstacles
 # except NameError: obstacles = None
 
-x_length = 6
-y_length = 6
-z_length = 6
+x_length = 12
+y_length = 12
+z_length = 12
 
-grid_size = 6
+grid_size = 12
 
 grid_density = 1
 
