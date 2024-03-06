@@ -10,7 +10,7 @@ import os
 
 from spaces import agent_action_space, agent_obs_space
 
-train_ID = "MultiAgent_Generalize_13"
+train_ID = "MultiAgent_Generalize_17"
 
 checkpoint_dir = os.path.join('C:\\Users\\MDO-Disco\\Documents\\Thesis\\RLlib\\Checkpoints\\',train_ID)
 # Create the directory if it doesn't exist
@@ -31,12 +31,15 @@ env_config = {
 config = {
     "env": "MultiPipe",
     "env_config": env_config,
-    "train_batch_size":6000,
-    "lr": 5e-5,
-    "entropy_coeff": 0.1,
+    "train_batch_size":40000,
+    "sum_sgd_iter": 10,
+    "sgd_minibatch_size": 512,
+    "lr": 0.0001,
+    "lambda": 0.95,
+    "clip_param": 0.2,
     "num_gpus":1,
     "num_workers": 4,
-    "num_envs_per_worker":1,
+    "num_envs_per_worker":2,
     "framework": "torch",
     "observation_space": agent_obs_space,
     "action_space": agent_action_space,
@@ -46,7 +49,7 @@ trainer = PPO(config=config)
 
 # trainer.train()
 
-for i in range(500):
+for i in range(100):
     result = trainer.train()
     # print(pretty_print(result))
     checkpoint_path = os.path.join(checkpoint_dir, f"checkpoint_{i}")

@@ -30,9 +30,9 @@ agent_goal_space = spaces.Box(
 )
 
 agent_distance_to_goal_space = spaces.Box(
-    shape=(1,),
+    shape=(3,),
     dtype=float,
-    low=0.0,
+    low= -grid_size*grid_size,
     high = grid_size*grid_size,
 )
 

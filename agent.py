@@ -83,12 +83,19 @@ class PipeAgent:
         return self.position
     
     def distance_to_goal(self):
-        return np.array([np.abs(np.linalg.norm(self.position - self.goal))])
+        #First return commented out because it returns total distance
+        # return np.array([np.abs(np.linalg.norm(self.position - self.goal))])
+        #Return distance to goal as a vector
+        return np.subtract(self.goal, self.position)
+
 
 # agent = PipeAgent(start_pt=(0,0,0), end_pt=(2,2,2))
 # agent.initialize()
 # print(agent.get_position())
+# print(agent.distance_to_goal())
 # agent.move(2)
+# print(agent.get_position())
+# print(agent.distance_to_goal())
 # print(agent.get_position())
 # agent.reverse(2)
 # print(agent.get_position())
