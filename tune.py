@@ -66,7 +66,7 @@ pbt = PopulationBasedTraining(
 )
 
 # Stop when we've either reached 100 training iterations or reward=300
-stopping_criteria = {"training_iteration": 100, "episode_reward_mean": 5}
+stopping_criteria = {"training_iteration": 100, "episode_reward_mean": 15}
 
 tuner = tune.Tuner(
     "PPO",

@@ -11,7 +11,7 @@ import os
 from spaces import agent_action_space, agent_obs_space
 
 # Choose what trained model to use based on train_ID
-train_ID = "MultiAgent_Generalize_16"
+train_ID = "MultiAgent_Generalize_19"
 
 checkpoint_dir = os.path.join('C:\\Users\\MDO-Disco\\Documents\\Thesis\\RLlib\\Checkpoints\\',train_ID)
 
@@ -32,19 +32,19 @@ env_config = {
 config = {
     "env": "MultiPipe",
     "env_config": env_config,
-    "train_batch_size":40000,
-    "sum_sgd_iter": 10,
-    "sgd_minibatch_size": 512,
-    "lr": 0.0001,
+    "train_batch_size":34560,
+    "num_sgd_iter": 1,
+    "sgd_minibatch_size": 1812,
+    "lr": 0.0005,
     "lambda": 0.95,
-    "clip_param": 0.2,
+    "clip_param": 0.1536,
     "num_gpus":1,
     "num_workers": 4,
     "num_envs_per_worker":2,
     "framework": "torch",
     "observation_space": agent_obs_space,
     "action_space": agent_action_space,
-    }         
+    }            
 
 
 # Test one episode
