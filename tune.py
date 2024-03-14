@@ -66,7 +66,7 @@ pbt = PopulationBasedTraining(
 )
 
 # Stop when we've either reached 100 training iterations or reward=300
-stopping_criteria = {"training_iteration": 100, "episode_reward_mean": 15}
+stopping_criteria = {"training_iteration": 100, "episode_reward_mean": 80}
 
 tuner = tune.Tuner(
     "PPO",
@@ -87,10 +87,11 @@ tuner = tune.Tuner(
         "lambda": 0.95,
         "clip_param": 0.2,
         "lr": 1e-4,
+        "gamma": 0.9,
         # These params start off randomly drawn from a set.
         "num_sgd_iter": tune.choice([10, 20, 30]),
         "sgd_minibatch_size": tune.choice([128, 512, 2048]),
-        "train_batch_size": tune.choice([10000, 20000, 40000]),
+        "train_batch_size": tune.choice([10000, 20000, 40000, 60000]),
     },
     run_config=train.RunConfig(stop=stopping_criteria),
 )
