@@ -2,7 +2,9 @@ import numpy as np
 
 
 # obstacle_box = np.array([(2,2,2),(2,2,6),(2,6,6),(6,6,6),(6,2,2),(6,2,6),(2,6,2),(6,6,2)])
-obstacles = np.array([1,8,1,5,1,5])  # bounding box (xmin,xmax,ymin,ymax,zmin,zmax)
+obstacles = np.array([(2,6,2,8,0,5),(9,12,9,12,0,6)])  # bounding box (xmin,xmax,ymin,ymax,zmin,zmax)
+# obstacles = np.array([(2,6,2,8,0,5)])
+# obstacles = None
 
 # try: obstacles
 # except NameError: obstacles = None
@@ -21,16 +23,17 @@ X = 0
 Y = 1
 Z = 2
 
-start_pts = np.array([(0,0,0),(6,0,0),(12,0,0)])
-end_pts = np.array([(12,12,12),(6,12,12),(12,12,12)])
+# start_pts = np.array([(1,4,1),(4,1,3)])
+# end_pts = np.array([(10,10,6),(10,9,4)])
+
+start_pts = np.array([(4,1,4),(4,1,3)])
+end_pts = np.array([(10,9,5),(10,9,4)])
 
 
-num_pipes = 3
+num_pipes = 2
 
-num_directions = 18
+num_directions = 6
 
-step_reward = -0.001
-arrival_reward = 1.0
-collision_reward = -0.5
+
 
 # print(obstacles)

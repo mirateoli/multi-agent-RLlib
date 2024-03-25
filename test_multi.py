@@ -11,19 +11,22 @@ import os
 from spaces import agent_action_space, agent_obs_space
 
 # Choose what trained model to use based on train_ID
-train_ID = "MultiAgent_Generalize_19"
+train_ID = "MultiAgent_Obstacles_17"
 
 checkpoint_dir = os.path.join('C:\\Users\\MDO-Disco\\Documents\\Thesis\\RLlib\\Checkpoints\\',train_ID)
 
 trained_checkpoint_path = os.path.join(checkpoint_dir, "final_checkpoint")
+
+
 
 def env_creator(env_config):
     return Environment(env_config)
 
 register_env("MultiPipe", env_creator)
 
+# set "train" to False if you don't want to test specified start and end points
 env_config = {
-    "train": True,
+    "train": False,
     "num_pipes": num_pipes,
     "start_pts":start_pts,
     "end_pts":end_pts,
@@ -32,19 +35,19 @@ env_config = {
 config = {
     "env": "MultiPipe",
     "env_config": env_config,
-    "train_batch_size":34560,
-    "num_sgd_iter": 1,
-    "sgd_minibatch_size": 1812,
-    "lr": 0.0005,
-    "lambda": 0.95,
-    "clip_param": 0.1536,
+    "train_batch_size":20000,
+    "num_sgd_iter": 30,
+    "sgd_minibatch_size": 2048,
+    "lr": 0.0001,
+    "lambda":  0.95,
+    "clip_param": 0.2,
     "num_gpus":1,
     "num_workers": 4,
-    "num_envs_per_worker":2,
+    "num_envs_per_worker":1,
     "framework": "torch",
     "observation_space": agent_obs_space,
     "action_space": agent_action_space,
-    }            
+    }                 
 
 
 # Test one episode
