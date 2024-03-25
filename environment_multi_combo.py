@@ -152,7 +152,7 @@ class Environment(MultiAgentEnv):
             for obstacle in self.obstacles:
                 bounding_box = obstacle.tolist()
                 box = Box(size=bounding_box)
-                box.color('g4')
+                box.color('grey')
                 box.opacity(0.5)
                 plotter.add(box)
             plotter.show(axes=1)
