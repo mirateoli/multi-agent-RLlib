@@ -11,7 +11,7 @@ import os
 from spaces import agent_action_space, agent_obs_space
 
 # Choose what trained model to use based on train_ID
-train_ID = "MultiAgent_Obstacles_17"
+train_ID = "MultiAgent_branch_5"
 
 checkpoint_dir = os.path.join('C:\\Users\\MDO-Disco\\Documents\\Thesis\\RLlib\\Checkpoints\\',train_ID)
 

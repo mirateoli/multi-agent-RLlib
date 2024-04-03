@@ -26,8 +26,8 @@ Z = 2
 # start_pts = np.array([(1,4,1),(4,1,3)])
 # end_pts = np.array([(10,10,6),(10,9,4)])
 
-start_pts = np.array([(4,1,4),(4,1,3)])
-end_pts = np.array([(10,9,5),(10,9,4)])
+start_pts = np.array([(4,1,4),(4,1,4)])
+end_pts = np.array([(10,9,9),(10,9,4)])
 
 
 num_pipes = 2

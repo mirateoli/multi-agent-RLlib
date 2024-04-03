@@ -172,20 +172,22 @@ class Environment(MultiAgentEnv):
     def get_reward(self, agent_id):
         reward = -0.5 # penalty for every step
         if(self.agents[agent_id].position == self.agents[agent_id].goal).all():
-            reward += 50
+            reward += 50 # reward for reaching goal
             reward += - 1 * self.path_length(self.paths[agent_id]) # penalty for path length
         else:
-            reward += 0.1 / np.abs(np.linalg.norm(self.agents[agent_id].distance_to_goal())) # reward for how far from goal
+            reward += - 0.1 * np.abs(np.linalg.norm(self.agents[agent_id].distance_to_goal())) # reward for how far from goal
         if self.obs_ranges is not None:
             for i in range(self.obstacles.shape[0]):
                 if (self.agents[agent_id].position[0] in range(self.obs_ranges["x"][i][0],self.obs_ranges["x"][i][1]+1)) and\
                     (self.agents[agent_id].position[1] in range(self.obs_ranges["y"][i][0],self.obs_ranges["y"][i][1]+1)) and\
                     (self.agents[agent_id].position[2] in range(self.obs_ranges["z"][i][0],self.obs_ranges["z"][i][1]+1)):
-                    reward += -2
-                    # print("Agent moved through obstacle")
-                # else:
-                #     reward += 0
-
+                    reward += -2 # penalty for moving through obstacle
+        
+        # check for pipe collision
+        if self.path_collision(agent_id):
+            # print("Pipe ",agent_id,"collided")
+            reward += 5 # positive if branching
+        
         return reward
     
     def is_terminated(self, agent_id):
@@ -202,6 +204,17 @@ class Environment(MultiAgentEnv):
         pts = Points(path)
         ln = Line(pts)
         return ln.length()
+    
+    def path_collision(self, agent_id):
+        for i in range(self.num_agents):
+            if i != agent_id:
+                if (self.agents[agent_id].position == self.agents[i].position).all():
+                    return True
+                else:
+                    return False
+            else:
+                continue
+            
 
 # env = Environment(config={"train":False,"num_pipes":num_pipes, "start_pts":start_pts, "end_pts":end_pts})
 
@@ -210,12 +223,12 @@ class Environment(MultiAgentEnv):
 
 
 # obs, rew, terminateds, truncateds, info = env.step(
-#         {0: 2, 1: 0}
+#         {0: 0, 1: 0}
 #     )
 # print(rew)
 
 # obs, rew, terminateds, truncateds, info = env.step(
-#         {0: 2, 1: 0}
+#         {0: 0, 1: 0}
 #     )
 # print(rew)
 
