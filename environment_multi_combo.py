@@ -13,6 +13,7 @@ from vedo import *
 from inputs import *
 from agent import *
 from spaces import *
+import design_spaces as ds
 
 from environment_single import EnvironmentSingle
 
@@ -28,7 +29,8 @@ class Environment(MultiAgentEnv):
 
         # if training, randomize start and end points
         if self.train:
-            self.start_pts = randint(0, grid_size, size=(self.num_agents, 3))
+            # self.start_pts = randint(0, grid_size, size=(self.num_agents, 3))
+            self.start_pts =config["start_pts"] # same start points if doing branching
             self.end_pts = randint(0, grid_size, size=(self.num_agents, 3))
         # if testing, use defined start and end points
         else:
@@ -129,17 +131,23 @@ class Environment(MultiAgentEnv):
         plotter = Plotter()
 
         pts = {i: self.paths[i] for i in range(self.num_agents)}
+        plot_pts = {i: Points(pts[i]) for i in range(self.num_agents)}
+
         key_pts = {i: Points([self.start_pts[i],self.end_pts[i]]) for i in range(self.num_agents)}                    
-        key_pts[0].color("blue").ps(10)
-        key_pts[1].color("blue").ps(10)
 
         ln = {i: Line(pts[i]) for i in range(self.num_agents)}
-        ln[0].color("red5").linewidth(5)
-        ln[1].color("green").linewidth(5)
+        ln[0].color("red5").linewidth(10)
+        ln[1].color("green").linewidth(10)
+        ln[2].color("blue").linewidth(10)
 
         txt = ''
 
+        for pts in plot_pts.values():
+            pts.color("black").ps(11)
+            plotter.add(pts)
+
         for pts in key_pts.values():
+            pts.color("yellow").ps(12)
             plotter.add(pts)
 
         for i, lns in enumerate(ln.values()):
@@ -148,12 +156,14 @@ class Environment(MultiAgentEnv):
 
         plotter.add(Text2D(txt))
 
+        ds.room(plotter, x_length+1, z_length+1, y_length+1)
+
         if self.obstacles is not None:
             for obstacle in self.obstacles:
                 bounding_box = obstacle.tolist()
                 box = Box(size=bounding_box)
-                box.color('grey')
-                box.opacity(0.5)
+                box.color(c=(135,206,250))
+                box.opacity(0.7)
                 plotter.add(box)
             plotter.show(axes=1)
             # show(key_pts[0], key_pts[1],Points(pts[0]),Points(pts[1]),ln[0], ln[1],box,axes=1).close()
@@ -214,6 +224,14 @@ class Environment(MultiAgentEnv):
                     return False
             else:
                 continue
+
+    def output_file(self, file_path):
+        # Open the file in append mode ('a') or write mode ('w')
+        # 'a' mode: appends to the end of the file if it exists, or creates a new file if it doesn't
+        # 'w' mode: opens the file for writing, or creates a new file if it doesn't exist
+        with open(file_path, 'a') as file:
+            # Write some content to the file
+            file.write('Hello, world!\n')
             
 
 # env = Environment(config={"train":False,"num_pipes":num_pipes, "start_pts":start_pts, "end_pts":end_pts})

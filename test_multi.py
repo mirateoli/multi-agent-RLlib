@@ -15,8 +15,8 @@ train_ID = "MultiAgent_branch_5"
 
 checkpoint_dir = os.path.join('C:\\Users\\MDO-Disco\\Documents\\Thesis\\RLlib\\Checkpoints\\',train_ID)
 
-trained_checkpoint_path = os.path.join(checkpoint_dir, "final_checkpoint")
-
+# trained_checkpoint_path = os.path.join(checkpoint_dir, "final_checkpoint")
+trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\\PPO_2024-04-09_11-47-41\\PPO_MultiPipe_839e2_00001_1_num_sgd_iter=20,sgd_minibatch_size=2048,train_batch_size=60000_2024-04-09_11-47-47\\checkpoint_000004\\"
 
 
 def env_creator(env_config):

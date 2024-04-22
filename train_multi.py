@@ -10,7 +10,7 @@ import os
 
 from spaces import agent_action_space, agent_obs_space
 
-train_ID = "MultiAgent_branch_5"
+train_ID = "MultiAgent_branch_13"
 
 checkpoint_dir = os.path.join('C:\\Users\\MDO-Disco\\Documents\\Thesis\\RLlib\\Checkpoints\\',train_ID)
 # Create the directory if it doesn't exist
@@ -49,7 +49,7 @@ trainer = PPO(config=config)
 
 # trainer.train()
 
-for i in range(50):
+for i in range(30):
     result = trainer.train()
     # print(pretty_print(result))
     checkpoint_path = os.path.join(checkpoint_dir, f"checkpoint_{i}")
@@ -89,5 +89,5 @@ while not terminated:
     # print("agent moved")
     # print("current position",env.agents.get_position())
 
-print(env.paths )
+print(env.paths)
 env.render()

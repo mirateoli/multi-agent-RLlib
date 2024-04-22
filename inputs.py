@@ -26,11 +26,11 @@ Z = 2
 # start_pts = np.array([(1,4,1),(4,1,3)])
 # end_pts = np.array([(10,10,6),(10,9,4)])
 
-start_pts = np.array([(4,1,4),(4,1,4)])
-end_pts = np.array([(10,9,9),(10,9,4)])
+start_pts = np.array([(4,1,4),(4,1,4),(4,1,4)])
+end_pts = np.array([(10,11,7),(10,8,4),(8,11,3)])
 
 
-num_pipes = 2
+num_pipes = 3
 
 num_directions = 6
 
