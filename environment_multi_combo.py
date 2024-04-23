@@ -1,21 +1,17 @@
-from typing import Dict
 from numpy.random import randint
 
-import ray
 import copy
 
 from ray.rllib import MultiAgentEnv
 from ray.rllib.env import EnvContext
-from ray.rllib.utils import check_env
 
 from vedo import *
 
 from inputs import *
 from agent import *
 from spaces import *
-import design_spaces as ds
+import design_spaces as DS
 
-from environment_single import EnvironmentSingle
 
 class Environment(MultiAgentEnv):
     
@@ -37,7 +33,7 @@ class Environment(MultiAgentEnv):
             self.start_pts = config["start_pts"]
             self.end_pts = config["end_pts"]
 
-        self.obstacles = obstacles
+        self.obstacles = DS.obstacles
 
         if self.obstacles is not None:
             self.obs_ranges = {
@@ -136,9 +132,9 @@ class Environment(MultiAgentEnv):
         key_pts = {i: Points([self.start_pts[i],self.end_pts[i]]) for i in range(self.num_agents)}                    
 
         ln = {i: Line(pts[i]) for i in range(self.num_agents)}
-        ln[0].color("red5").linewidth(10)
-        ln[1].color("green").linewidth(10)
-        ln[2].color("blue").linewidth(10)
+        # ln[0].color("red5").linewidth(10)
+        # ln[1].color("green").linewidth(10)
+        # ln[2].color("blue").linewidth(10)
 
         txt = ''
 
@@ -152,18 +148,19 @@ class Environment(MultiAgentEnv):
 
         for i, lns in enumerate(ln.values()):
             txt += 'Length of line ' + str(i) +': ' +str(lns.length()) + '\n'
+            lns.color("red").linewidth(10)
             plotter.add(lns)
 
         plotter.add(Text2D(txt))
 
-        ds.room(plotter, x_length+1, z_length+1, y_length+1)
+        DS.room(plotter, x_length+1, y_length+1, z_length+1)
 
         if self.obstacles is not None:
             for obstacle in self.obstacles:
                 bounding_box = obstacle.tolist()
                 box = Box(size=bounding_box)
                 box.color(c=(135,206,250))
-                box.opacity(0.7)
+                box.opacity(0.9)
                 plotter.add(box)
             plotter.show(axes=1)
             # show(key_pts[0], key_pts[1],Points(pts[0]),Points(pts[1]),ln[0], ln[1],box,axes=1).close()
@@ -234,31 +231,31 @@ class Environment(MultiAgentEnv):
             file.write('Hello, world!\n')
             
 
-# env = Environment(config={"train":False,"num_pipes":num_pipes, "start_pts":start_pts, "end_pts":end_pts})
+env = Environment(config={"train":False,"num_pipes":num_pipes, "start_pts":start_pts, "end_pts":end_pts})
 
-# obs, info = env.reset()
-# print(obs)
+obs, info = env.reset()
+print(obs)
 
 
-# obs, rew, terminateds, truncateds, info = env.step(
-#         {0: 0, 1: 0}
-#     )
-# print(rew)
+obs, rew, terminateds, truncateds, info = env.step(
+        {0: 0, 1: 0}
+    )
+print(rew)
 
-# obs, rew, terminateds, truncateds, info = env.step(
-#         {0: 0, 1: 0}
-#     )
-# print(rew)
+obs, rew, terminateds, truncateds, info = env.step(
+        {0: 0, 1: 0}
+    )
+print(rew)
 
-# obs, rew, terminateds, truncateds, info = env.step(
-#         {0: 2, 1: 0}
-#     )
-# print(rew)
+obs, rew, terminateds, truncateds, info = env.step(
+        {0: 2, 1: 0}
+    )
+print(rew)
 
-# obs, rew, terminateds, truncateds, info = env.step(
-#         {0: 2, 1: 1}
-#     )
+obs, rew, terminateds, truncateds, info = env.step(
+        {0: 2, 1: 1}
+    )
 
-# print(rew)
+print(rew)
 
-# env.render()
+env.render()

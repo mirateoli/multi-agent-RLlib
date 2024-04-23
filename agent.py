@@ -1,12 +1,17 @@
 from typing import Optional
 import numpy as np
-from inputs import X, Y, Z, start_pts, end_pts, x_length, y_length, z_length
+from inputs import x_length, y_length, z_length
 
 # set N, S, E, W to action keys for ease of understanding
 N = 0
 S = 1
 E = 2
 W = 3
+
+X = 0
+Y = 1
+Z = 2
+
 
 actions_key = {
     0 : (0,1,0),  # North
@@ -39,6 +44,7 @@ actions_key = {
 
 
 class PipeAgent:
+
     def __init__(self, start_pt, end_pt):
         self.position: Optional[np.darray] = None
         self.start_pt = start_pt
@@ -89,14 +95,4 @@ class PipeAgent:
         return np.subtract(self.goal, self.position)
 
 
-# agent = PipeAgent(start_pt=(0,0,0), end_pt=(2,2,2))
-# agent.initialize()
-# print(agent.get_position())
-# print(agent.distance_to_goal())
-# agent.move(2)
-# print(agent.get_position())
-# print(agent.distance_to_goal())
-# print(agent.get_position())
-# agent.reverse(2)
-# print(agent.get_position())
 
