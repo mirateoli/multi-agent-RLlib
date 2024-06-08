@@ -8,8 +8,8 @@ length = 20
 width = 20
 height = 16
 
-# Create a Plotter instance
-plotter = Plotter()
+# # Create a Plotter instance
+# plotter = Plotter()
 
 def room(plotter, room_length, room_width, room_height):
 

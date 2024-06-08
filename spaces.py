@@ -3,7 +3,7 @@ import numpy as np
 
 from gymnasium import spaces
 
-from inputs import num_pipes, num_directions, grid_size
+from inputs import num_directions, grid_size
 # Observation spaces
 
 agent_self_space = spaces.Box(

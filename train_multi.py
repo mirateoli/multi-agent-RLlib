@@ -2,7 +2,7 @@ from ray.rllib.algorithms.ppo import PPOConfig, PPO
 from ray.tune.logger import pretty_print
 from ray.tune.registry import register_env
 
-from environment_multi_combo import Environment
+from environment import Environment
 from inputs import start_pts, end_pts, num_pipes
 
 import numpy as np

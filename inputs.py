@@ -1,5 +1,5 @@
 import numpy as np
-import select_points_GUI as SPG
+# import select_points_GUI as SPG
 import design_spaces as DS
 
 
@@ -8,10 +8,10 @@ import design_spaces as DS
 
 obstacles = DS.obstacles
 
-num_pipes, key_pts = SPG.select_pts(obstacles)
+# num_pipes, key_pts = SPG.select_pts(obstacles)
 
-start_pts = key_pts[::2] # get even indices
-end_pts = key_pts[1::2]   # get odd indices
+# start_pts = key_pts[::2] # get even indices
+# end_pts = key_pts[1::2]   # get odd indices
 
 x_length = DS.length
 y_length = DS.width
@@ -19,7 +19,7 @@ z_length = DS.height
 
 grid_size = max(x_length, y_length, z_length)
 
-num_directions = 6
+num_directions = 18
 
 
 

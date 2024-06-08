@@ -7,7 +7,7 @@ from ray.rllib.env import EnvContext
 
 from vedo import *
 
-from inputs import *
+# from inputs import *
 from agent import *
 from spaces import *
 import design_spaces as DS
@@ -25,8 +25,8 @@ class Environment(MultiAgentEnv):
 
         # if training, randomize start and end points
         if self.train:
-            # self.start_pts = randint(0, grid_size, size=(self.num_agents, 3))
-            self.start_pts =config["start_pts"] # same start points if doing branching
+            self.start_pts = randint(0, grid_size, size=(self.num_agents, 3))
+            # self.start_pts =config["start_pts"] # same start points if doing branching
             self.end_pts = randint(0, grid_size, size=(self.num_agents, 3))
         # if testing, use defined start and end points
         else:
@@ -50,7 +50,7 @@ class Environment(MultiAgentEnv):
             self.obs_ranges = None
 
         self.agents = [PipeAgent(self.start_pts[i], self.end_pts[i]) for i in range(self.num_agents)]
-        self._agent_ids = set(range(num_pipes))
+        self._agent_ids = set(range(self.num_pipes))
         self.terminateds = set()
         self.truncateds = set()
         self.observation_space = agent_obs_space
@@ -190,10 +190,10 @@ class Environment(MultiAgentEnv):
                     (self.agents[agent_id].position[2] in range(self.obs_ranges["z"][i][0],self.obs_ranges["z"][i][1]+1)):
                     reward += -2 # penalty for moving through obstacle
         
-        # check for pipe collision
-        if self.path_collision(agent_id):
-            # print("Pipe ",agent_id,"collided")
-            reward += 5 # positive if branching
+        # # check for pipe collision
+        # if self.path_collision(agent_id):
+        #     # print("Pipe ",agent_id,"collided")
+        #     reward += 5 # positive if branching
         
         return reward
     
@@ -231,31 +231,31 @@ class Environment(MultiAgentEnv):
             file.write('Hello, world!\n')
             
 
-env = Environment(config={"train":False,"num_pipes":num_pipes, "start_pts":start_pts, "end_pts":end_pts})
+# env = Environment(config={"train":False,"num_pipes":num_pipes, "start_pts":start_pts, "end_pts":end_pts})
 
-obs, info = env.reset()
-print(obs)
+# obs, info = env.reset()
+# print(obs)
 
 
-obs, rew, terminateds, truncateds, info = env.step(
-        {0: 0, 1: 0}
-    )
-print(rew)
+# obs, rew, terminateds, truncateds, info = env.step(
+#         {0: 0, 1: 0}
+#     )
+# print(rew)
 
-obs, rew, terminateds, truncateds, info = env.step(
-        {0: 0, 1: 0}
-    )
-print(rew)
+# obs, rew, terminateds, truncateds, info = env.step(
+#         {0: 0, 1: 0}
+#     )
+# print(rew)
 
-obs, rew, terminateds, truncateds, info = env.step(
-        {0: 2, 1: 0}
-    )
-print(rew)
+# obs, rew, terminateds, truncateds, info = env.step(
+#         {0: 2, 1: 0}
+#     )
+# print(rew)
 
-obs, rew, terminateds, truncateds, info = env.step(
-        {0: 2, 1: 1}
-    )
+# obs, rew, terminateds, truncateds, info = env.step(
+#         {0: 2, 1: 1}
+#     )
 
-print(rew)
+# print(rew)
 
-env.render()
+# env.render()

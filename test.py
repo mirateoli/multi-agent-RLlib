@@ -2,13 +2,22 @@ from ray.rllib.algorithms.ppo import PPOConfig, PPO
 from ray.tune.logger import pretty_print
 from ray.tune.registry import register_env
 
-from environment_multi_combo import Environment
-from inputs import start_pts, end_pts, num_pipes
+from environment import Environment
+# from inputs import start_pts, end_pts, num_pipes
+import select_points_GUI as SPG
+import design_spaces as DS
 
 import numpy as np
 import os
+import time
 
 from spaces import agent_action_space, agent_obs_space
+
+# set start points and end points
+num_pipes, key_pts = SPG.select_pts(DS.obstacles)
+
+start_pts = key_pts[::2] # get even indices
+end_pts = key_pts[1::2]   # get odd indices
 
 # Choose what trained model to use based on train_ID
 train_ID = "MultiAgent_branch_5"
@@ -16,8 +25,15 @@ train_ID = "MultiAgent_branch_5"
 checkpoint_dir = os.path.join('C:\\Users\\MDO-Disco\\Documents\\Thesis\\RLlib\\Checkpoints\\',train_ID)
 
 # trained_checkpoint_path = os.path.join(checkpoint_dir, "final_checkpoint")
-trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\\PPO_2024-04-09_11-47-41\\PPO_MultiPipe_839e2_00001_1_num_sgd_iter=20,sgd_minibatch_size=2048,train_batch_size=60000_2024-04-09_11-47-47\\checkpoint_000004\\"
 
+# Obstacle avoidance with 90 deg bends (change input to have num_directions = 6)
+# trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\\PPO_2024-04-24_15-43-54\\PPO_MultiPipe_ff418_00000_0_num_sgd_iter=20,sgd_minibatch_size=2048,train_batch_size=40000_2024-04-24_15-44-00\\checkpoint_000012\\"
+
+# Obstacle avoidance with 90 and 45 deg bends (change input to have num_directions = 18)
+trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\\PPO_2024-06-07_14-57-19\\PPO_MultiPipe_c7098_00000_0_num_sgd_iter=30,sgd_minibatch_size=512,train_batch_size=40000_2024-06-07_14-57-24\\checkpoint_000026\\"
+
+# FAIL Obstacle avoidance with 90 and 45 deg bends (increased pength penalty by 2x)
+# trained_checkpoint_path = "C:\\Users\MDO-Disco\\ray_results\\PPO_2024-06-07_16-35-11\\PPO_MultiPipe_72e58_00001_1_num_sgd_iter=30,sgd_minibatch_size=2048,train_batch_size=60000_2024-06-07_16-35-16\\checkpoint_000010\\"
 
 def env_creator(env_config):
     return Environment(env_config)
@@ -42,7 +58,7 @@ config = {
     "lambda":  0.95,
     "clip_param": 0.2,
     "num_gpus":1,
-    "num_workers": 4,
+    "num_workers": 1,
     "num_envs_per_worker":1,
     "framework": "torch",
     "observation_space": agent_obs_space,
@@ -52,6 +68,8 @@ config = {
 
 # Test one episode
 print("TESTING NOW.......")
+
+
 
 test_config = config
 test_config["explore"]= False
@@ -67,6 +85,7 @@ episode_reward = 0
 terminated = False
 obs, info = env.reset()
 print(obs)
+start_time = time.time()
 while not terminated or truncated:
     action = {}
     for agent_id, agent_obs in obs.items():
@@ -79,5 +98,9 @@ while not terminated or truncated:
     # print("current position",env.agents.get_position())
 
 print(env.paths )
+
+end_time = time.time()
+elapsed_time = end_time - start_time
+print("Time [s]: ", elapsed_time)
 env.render()
 

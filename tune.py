@@ -1,23 +1,20 @@
-
-from ray.rllib.algorithms.ppo import PPOConfig, PPO
-from ray.tune.logger import pretty_print
 from ray.tune.registry import register_env
 
-from environment_multi_combo import Environment
-from inputs import start_pts, end_pts, num_pipes
+from environment import Environment
+# from inputs import start_pts, end_pts, num_pipes
 
-import numpy as np
-import os
-
-from spaces import agent_action_space, agent_obs_space
 import random
+import numpy as np
 
-import ray
 from ray import train, tune
 from ray.tune.schedulers import PopulationBasedTraining
 
-
 import argparse
+
+#uncomment for training
+num_pipes = 3
+start_pts = np.array([(4,1,4),(4,1,4),(4,1,4)])
+end_pts = np.array([(10,11,7),(10,8,4),(8,11,3)])
 
 def env_creator(env_config):
     return Environment(env_config)
@@ -66,7 +63,7 @@ pbt = PopulationBasedTraining(
 )
 
 # Stop when we've either reached 100 training iterations or reward=300
-stopping_criteria = {"training_iteration": 100, "episode_reward_mean": 100}
+stopping_criteria = {"training_iteration": 200, "episode_reward_mean": 100}
 
 tuner = tune.Tuner(
     "PPO",
