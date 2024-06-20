@@ -188,7 +188,8 @@ class Environment(MultiAgentEnv):
                 if (self.agents[agent_id].position[0] in range(self.obs_ranges["x"][i][0],self.obs_ranges["x"][i][1]+1)) and\
                     (self.agents[agent_id].position[1] in range(self.obs_ranges["y"][i][0],self.obs_ranges["y"][i][1]+1)) and\
                     (self.agents[agent_id].position[2] in range(self.obs_ranges["z"][i][0],self.obs_ranges["z"][i][1]+1)):
-                    reward += -2 # penalty for moving through obstacle
+                    reward += -10 # penalty for moving through obstacle
+                    # print(agent_id,"collided with obstacle")
         
         # # check for pipe collision
         # if self.path_collision(agent_id):
@@ -230,7 +231,6 @@ class Environment(MultiAgentEnv):
             # Write some content to the file
             file.write('Hello, world!\n')
             
-
 # env = Environment(config={"train":False,"num_pipes":num_pipes, "start_pts":start_pts, "end_pts":end_pts})
 
 # obs, info = env.reset()
