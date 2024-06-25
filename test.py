@@ -42,7 +42,10 @@ checkpoint_dir = os.path.join('C:\\Users\\MDO-Disco\\Documents\\Thesis\\RLlib\\C
 # trained_checkpoint_path = "C:\\Users\MDO-Disco\\ray_results\\PPO_2024-06-10_16-57-28\\PPO_MultiPipe_0f3bd_00001_1_num_sgd_iter=10,sgd_minibatch_size=2048,train_batch_size=40000_2024-06-10_16-57-33\\checkpoint_000038\\"
 
 # Obstacle avoidance with 90 and 45 deg bends (200 iters, obs reward -10)
-trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\PPO_2024-06-12_12-37-01\\PPO_MultiPipe_024da_00000_0_num_sgd_iter=10,sgd_minibatch_size=512,train_batch_size=10000_2024-06-12_12-37-07\\checkpoint_000034\\"
+# trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\PPO_2024-06-12_12-37-01\\PPO_MultiPipe_024da_00000_0_num_sgd_iter=10,sgd_minibatch_size=512,train_batch_size=10000_2024-06-12_12-37-07\\checkpoint_000034\\"
+
+# Branching and obstacle avoidance and 90 and 45 deg bends
+trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\PPO_2024-06-20_16-02-03\\PPO_MultiPipe_f9b86_00001_1_num_sgd_iter=20,sgd_minibatch_size=2048,train_batch_size=40000_2024-06-20_16-02-09\\checkpoint_000025"
 
 def env_creator(env_config):
     return Environment(env_config)

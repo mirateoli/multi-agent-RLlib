@@ -25,8 +25,8 @@ class Environment(MultiAgentEnv):
 
         # if training, randomize start and end points
         if self.train:
-            self.start_pts = randint(0, grid_size, size=(self.num_agents, 3))
-            # self.start_pts =config["start_pts"] # same start points if doing branching
+            # self.start_pts = randint(0, grid_size, size=(self.num_agents, 3))
+            self.start_pts =config["start_pts"] # same start points if doing branching
             self.end_pts = randint(0, grid_size, size=(self.num_agents, 3))
         # if testing, use defined start and end points
         else:
@@ -188,13 +188,13 @@ class Environment(MultiAgentEnv):
                 if (self.agents[agent_id].position[0] in range(self.obs_ranges["x"][i][0],self.obs_ranges["x"][i][1]+1)) and\
                     (self.agents[agent_id].position[1] in range(self.obs_ranges["y"][i][0],self.obs_ranges["y"][i][1]+1)) and\
                     (self.agents[agent_id].position[2] in range(self.obs_ranges["z"][i][0],self.obs_ranges["z"][i][1]+1)):
-                    reward += -10 # penalty for moving through obstacle
+                    reward += -2 # penalty for moving through obstacle
                     # print(agent_id,"collided with obstacle")
         
-        # # check for pipe collision
-        # if self.path_collision(agent_id):
-        #     # print("Pipe ",agent_id,"collided")
-        #     reward += 5 # positive if branching
+        # check for pipe collision
+        if self.path_collision(agent_id):
+            # print("Pipe ",agent_id,"collided")
+            reward += 5 # positive if branching
         
         return reward
     
