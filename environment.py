@@ -1,6 +1,7 @@
 from numpy.random import randint
 
 import copy
+import random
 
 from ray.rllib import MultiAgentEnv
 from ray.rllib.env import EnvContext
@@ -18,6 +19,8 @@ class Environment(MultiAgentEnv):
     def __init__(self, config: EnvContext):
         super().__init__()
 
+        self.obstacles = DS.obstacles
+        free_coords = self.find_free_coords(self.obstacles, DS.length, DS.width, DS.height)
         
         self.train = config["train"]
         self.num_pipes = config["num_pipes"]
@@ -32,8 +35,6 @@ class Environment(MultiAgentEnv):
         else:
             self.start_pts = config["start_pts"]
             self.end_pts = config["end_pts"]
-
-        self.obstacles = DS.obstacles
 
         if self.obstacles is not None:
             self.obs_ranges = {
@@ -188,7 +189,7 @@ class Environment(MultiAgentEnv):
                 if (self.agents[agent_id].position[0] in range(self.obs_ranges["x"][i][0],self.obs_ranges["x"][i][1]+1)) and\
                     (self.agents[agent_id].position[1] in range(self.obs_ranges["y"][i][0],self.obs_ranges["y"][i][1]+1)) and\
                     (self.agents[agent_id].position[2] in range(self.obs_ranges["z"][i][0],self.obs_ranges["z"][i][1]+1)):
-                    reward += -2 # penalty for moving through obstacle
+                    reward += -5 # penalty for moving through obstacle
                     # print(agent_id,"collided with obstacle")
         
         # check for pipe collision
@@ -230,6 +231,36 @@ class Environment(MultiAgentEnv):
         with open(file_path, 'a') as file:
             # Write some content to the file
             file.write('Hello, world!\n')
+
+    def find_free_coords(self, obstacles, max_x, max_y, max_z):
+        """
+        Generate coordinates outside the given 3D bounding boxes within the range [0, max_value].
+
+        Parameters:
+        - obstacles: numpy array of shape (N, 6) where each row is (xmin, xmax, ymin, ymax, zmin, zmax)
+        - max_value: maximum value for x, y, and z coordinates
+
+        Returns:
+        - List of tuples representing coordinates outside the bounding boxes
+        """
+        # this one has different x y and z max values
+        outside_coords = []
+        
+        for x in range(max_x):
+            for y in range(max_y):
+                for z in range(max_z):
+                    is_outside = True
+                    for obstacle in obstacles:
+                        xmin, xmax, ymin, ymax, zmin, zmax = obstacle
+                        if xmin <= x <= xmax and ymin <= y <= ymax and zmin <= z <= zmax:
+                            is_outside = False
+                            break
+                    
+                    if is_outside:
+                        outside_coords.append((x, y, z))
+        
+        return outside_coords
+        
             
 # env = Environment(config={"train":False,"num_pipes":num_pipes, "start_pts":start_pts, "end_pts":end_pts})
 
