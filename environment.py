@@ -59,6 +59,9 @@ class Environment(MultiAgentEnv):
 
         self.paths = {i: np.array([self.start_pts[i]]) for i in range(self.num_agents)}
 
+        # define variable to store last actions so bend can be checked
+        self.last_actions = None
+
 
     def reset(self,*, seed=None, options=None):
         super().reset(seed=seed)
@@ -92,12 +95,17 @@ class Environment(MultiAgentEnv):
             }
 
         info = {agent: {} for agent in self.agents}
+
+        self.last_actions = None
+        self.bends = 0
+
         return observations, info
 
     def step(self, action_dict):
         observations, rewards, terminateds, truncateds, info, = {}, {}, {}, {}, {}
 
         self.maxsteps -= 1
+        self.actions = action_dict
 
         for i, action in action_dict.items():
             self.agents[i].move(action)
@@ -119,6 +127,8 @@ class Environment(MultiAgentEnv):
         # remove agent from active agents if terminated is true
         # Remove agent from active_agents if terminated is true
         self.active_agents = [agent_id for agent_id in self.active_agents if not terminateds[agent_id]]
+
+        self.last_actions = self.actions
 
 
         # print("Observations:",observations,"\nTerminateds:", terminateds, "\nSteps left:",self.maxsteps)
@@ -192,6 +202,12 @@ class Environment(MultiAgentEnv):
                     (self.agents[agent_id].position[2] in range(self.obs_ranges["z"][i][0],self.obs_ranges["z"][i][1]+1)):
                     reward += -5 # penalty for moving through obstacle
                     # print(agent_id,"collided with obstacle")
+
+        # check for pipe bend
+        if self.last_actions != None:
+            if (np.cross(actions_key[self.last_actions[agent_id]], actions_key[self.actions])).any() != 0:
+                self.bends += 1
+                reward += -2
         
         # # check for pipe collision
         # if self.path_collision(agent_id):
