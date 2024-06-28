@@ -78,7 +78,7 @@ obstacles = np.array([(2, 6, 2, 8, 0, 5), (9, 14, 8, 12, 0, 4), (0, 2, 12, 18, 0
 outside_coords = get_outside_coordinates(obstacles, max_x, max_y, max_z)
 print(outside_coords)
 
-start_pt = random.sample(outside_coords,3)
+start_pt = random.sample(outside_coords,1) * 3
 end_pt = random.sample(outside_coords,3)
 
 while (start_pt == end_pt):

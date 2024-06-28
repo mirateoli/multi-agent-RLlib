@@ -28,9 +28,9 @@ class Environment(MultiAgentEnv):
 
         # if training, randomize start and end points
         if self.train:
-            # self.start_pts = randint(0, grid_size, size=(self.num_agents, 3))
-            self.start_pts =config["start_pts"] # same start points if doing branching
-            self.end_pts = randint(0, grid_size, size=(self.num_agents, 3))
+            # self.start_pts = random.sample(free_coords, self.num_agents)
+            self.start_pts = [random.sample(free_coords, 1)] * self.num_agents # same start points if doing branching
+            self.end_pts = self.end_pts = random.sample(free_coords, self.num_agents)
         # if testing, use defined start and end points
         else:
             self.start_pts = config["start_pts"]

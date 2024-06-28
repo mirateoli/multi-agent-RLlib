@@ -46,10 +46,12 @@ checkpoint_dir = os.path.join('C:\\Users\\MDO-Disco\\Documents\\Thesis\\RLlib\\C
 
 # trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\PPO_2024-06-26_11-37-20\\PPO_MultiPipe_f9b4a_00004_4_lr=0.0000,sgd_minibatch_size=256,train_batch_size=4000_2024-06-26_11-37-20\\checkpoint_000009"
 
-trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\PPO_2024-06-25_13-11-16\\PPO_MultiPipe_ef1eb_00022_22_lr=0.0000,sgd_minibatch_size=512,train_batch_size=16000_2024-06-25_13-11-17\\checkpoint_000000\\"
+# trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\PPO_2024-06-25_13-11-16\\PPO_MultiPipe_ef1eb_00022_22_lr=0.0000,sgd_minibatch_size=512,train_batch_size=16000_2024-06-25_13-11-17\\checkpoint_000000\\"
 
 # Branching and obstacle avoidance and 90 and 45 deg bends
-trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\PPO_2024-06-20_16-02-03\\PPO_MultiPipe_f9b86_00001_1_num_sgd_iter=20,sgd_minibatch_size=2048,train_batch_size=40000_2024-06-20_16-02-09\\checkpoint_000025"
+# trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\PPO_2024-06-20_16-02-03\\PPO_MultiPipe_f9b86_00001_1_num_sgd_iter=20,sgd_minibatch_size=2048,train_batch_size=40000_2024-06-20_16-02-09\\checkpoint_000025"
+
+trained_checkpoint_path = "C:\\Users\MDO-Disco\\ray_results\\PPO_2024-06-27_15-16-53\\PPO_MultiPipe_d024a_00010_10_lr=0.0000,sgd_minibatch_size=128,train_batch_size=8000_2024-06-27_15-16-53\\checkpoint_000009\\"
 
 def env_creator(env_config):
     return Environment(env_config)
