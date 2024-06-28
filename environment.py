@@ -20,7 +20,7 @@ class Environment(MultiAgentEnv):
         super().__init__()
 
         self.obstacles = DS.obstacles
-        free_coords = self.find_free_coords(self.obstacles, DS.length, DS.width, DS.height)
+        self.free_coords = self.find_free_coords(self.obstacles, DS.length, DS.width, DS.height)
         
         self.train = config["train"]
         self.num_pipes = config["num_pipes"]
@@ -28,9 +28,9 @@ class Environment(MultiAgentEnv):
 
         # if training, randomize start and end points
         if self.train:
-            self.start_pts = random.sample(free_coords, 3)
+            self.start_pts = random.sample(self.free_coords, 3)
             # self.start_pts =config["start_pts"] # same start points if doing branching
-            self.end_pts = random.sample(free_coords, 3)
+            self.end_pts = random.sample(self.free_coords, 3)
         # if testing, use defined start and end points
         else:
             self.start_pts = config["start_pts"]
@@ -65,8 +65,9 @@ class Environment(MultiAgentEnv):
 
         # if training, randomize start and end points
         if self.train:
-            self.start_pts = randint(0, grid_size, size=(self.num_agents, 3))
-            self.end_pts = randint(0, grid_size, size=(self.num_agents, 3))
+            self.start_pts = random.sample(self.free_coords, 3)
+            # self.start_pts =config["start_pts"] # same start points if doing branching
+            self.end_pts = random.sample(self.free_coords, 3)
         # if testing, use defined start and end points
         else:
             self.start_pts = self.start_pts
