@@ -47,8 +47,8 @@ class PipeAgent:
 
     def __init__(self, start_pt, end_pt):
         self.position: Optional[np.darray] = None
-        self.start_pt = start_pt
-        self.end_pt = end_pt
+        self.start_pt = np.array(start_pt)
+        self.end_pt = np.array(end_pt)
 
     def initialize(self) -> None:
         # Pipe should be initialized to its start point

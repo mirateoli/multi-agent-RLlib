@@ -30,8 +30,8 @@ env_config = {
     "end_pts":end_pts,
 }
 
-# Stop when we've either reached 100 training iterations or reward=300
-stopping_criteria = {"training_iteration": 100, "episode_reward_mean": 100}
+# Stop when we've either reached 100 training iterations
+stopping_criteria = {"training_iteration": 100}
 
 tuner = tune.Tuner(
     "PPO",

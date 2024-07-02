@@ -96,8 +96,9 @@ class Environment(MultiAgentEnv):
 
         info = {agent: {} for agent in self.agents}
 
+        self.actions = None
         self.last_actions = None
-        self.bends = 0
+        self.bends = {i: 0 for i in range(self.num_agents)}
 
         return observations, info
 
@@ -106,6 +107,7 @@ class Environment(MultiAgentEnv):
 
         self.maxsteps -= 1
         self.actions = action_dict
+        print(self.actions)
 
         for i, action in action_dict.items():
             self.agents[i].move(action)
@@ -129,6 +131,8 @@ class Environment(MultiAgentEnv):
         self.active_agents = [agent_id for agent_id in self.active_agents if not terminateds[agent_id]]
 
         self.last_actions = self.actions
+
+        print(self.bends)
 
 
         # print("Observations:",observations,"\nTerminateds:", terminateds, "\nSteps left:",self.maxsteps)
@@ -189,30 +193,34 @@ class Environment(MultiAgentEnv):
                 'distance_to_goal': self.agents[agent_id].distance_to_goal()
                 }
     def get_reward(self, agent_id):
-        reward = -0.5 # penalty for every step
-        if(self.agents[agent_id].position == self.agents[agent_id].goal).all():
-            reward += 50 # reward for reaching goal
-            reward += - 1 * self.path_length(self.paths[agent_id]) # penalty for path length
+        # reward should be zero if agent has terminated
+        if agent_id not in self.active_agents:
+                reward = 0
         else:
-            reward += - 0.1 * np.abs(np.linalg.norm(self.agents[agent_id].distance_to_goal())) # reward for how far from goal
-        if self.obs_ranges is not None:
-            for i in range(self.obstacles.shape[0]):
-                if (self.agents[agent_id].position[0] in range(self.obs_ranges["x"][i][0],self.obs_ranges["x"][i][1]+1)) and\
-                    (self.agents[agent_id].position[1] in range(self.obs_ranges["y"][i][0],self.obs_ranges["y"][i][1]+1)) and\
-                    (self.agents[agent_id].position[2] in range(self.obs_ranges["z"][i][0],self.obs_ranges["z"][i][1]+1)):
-                    reward += -5 # penalty for moving through obstacle
-                    # print(agent_id,"collided with obstacle")
+            reward = -0.5 # penalty for every step
+            if(self.agents[agent_id].position == self.agents[agent_id].goal).all():
+                reward += 50 # reward for reaching goal
+                reward += - 1 * self.path_length(self.paths[agent_id]) # penalty for path length
+            else:
+                reward += - 0.1 * np.abs(np.linalg.norm(self.agents[agent_id].distance_to_goal())) # reward for how far from goal
+            if self.obs_ranges is not None:
+                for i in range(self.obstacles.shape[0]):
+                    if (self.agents[agent_id].position[0] in range(self.obs_ranges["x"][i][0],self.obs_ranges["x"][i][1]+1)) and\
+                        (self.agents[agent_id].position[1] in range(self.obs_ranges["y"][i][0],self.obs_ranges["y"][i][1]+1)) and\
+                        (self.agents[agent_id].position[2] in range(self.obs_ranges["z"][i][0],self.obs_ranges["z"][i][1]+1)):
+                        reward += -5 # penalty for moving through obstacle
+                        # print(agent_id,"collided with obstacle")
 
-        # check for pipe bend
-        if self.last_actions != None:
-            if (np.cross(actions_key[self.last_actions[agent_id]], actions_key[self.actions])).any() != 0:
-                self.bends += 1
-                reward += -2
-        
-        # # check for pipe collision
-        # if self.path_collision(agent_id):
-        #     # print("Pipe ",agent_id,"collided")
-        #     reward += 5 # positive if branching
+            # check for pipe bend
+            if self.last_actions != None:
+                if (np.cross(actions_key[self.last_actions[agent_id]], actions_key[self.actions[agent_id]])).any() != 0:
+                    self.bends[agent_id] += 1
+                    reward += -2
+            
+            # # check for pipe collision
+            # if self.path_collision(agent_id):
+            #     # print("Pipe ",agent_id,"collided")
+            #     reward += 5 # positive if branching
         
         return reward
     
@@ -278,8 +286,13 @@ class Environment(MultiAgentEnv):
         
         return outside_coords
         
-            
-# env = Environment(config={"train":False,"num_pipes":num_pipes, "start_pts":start_pts, "end_pts":end_pts})
+
+# # test
+# num_pipes = 2
+# start_pts = np.array([(4,1,4),(5,1,7)])
+# end_pts = np.array([(10,11,7),(10,8,4)])
+
+# env = Environment(config={"train":True,"num_pipes":num_pipes, "start_pts":start_pts, "end_pts":end_pts})
 
 # obs, info = env.reset()
 # print(obs)
@@ -307,3 +320,6 @@ class Environment(MultiAgentEnv):
 # print(rew)
 
 # env.render()
+
+# obs, info = env.reset()
+# print(obs)
