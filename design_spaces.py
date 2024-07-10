@@ -1,12 +1,15 @@
 from vedo import *
 
-obstacles = np.array([(2,6,2,8,0,5),(9,14,8,12,0,4),(0,2,12,18,0,3),(18,20,3,8,0,9)])  # bounding box (xmin,xmax,ymin,ymax,zmin,zmax)
-
+# obstacles = np.array([(2,6,2,8,0,5),(9,14,8,12,0,4),(0,2,12,18,0,3),(18,20,3,8,0,9)])  # bounding box (xmin,xmax,ymin,ymax,zmin,zmax)
+# obstacles = np.array([(3,7,2,8,3,7),(9,14,8,12,9,13),(3,6,10,14,0,3),(10,14,8,16,0,2)])
+obstacles = np.array([(6,14,3,16,4,12)])
 
 # Define room dimensions
 length = 20
 width = 20
 height = 16
+
+
 
 # # Create a Plotter instance
 # plotter = Plotter()
@@ -62,8 +65,8 @@ def room(plotter, room_length, room_width, room_height):
 #     for obstacle in obstacles:
 #         bounding_box = obstacle.tolist()
 #         box = Box(size=bounding_box)
-#         box.color(c=(135,206,250))
-#         box.opacity(1)
+#         box.color(c=(255,165,0))
+#         box.opacity(0.5)
 #         plotter.add(box)
 #     plotter.show(axes=1)
 #     # show(key_pts[0], key_pts[1],Points(pts[0]),Points(pts[1]),ln[0], ln[1],box,axes=1).close()

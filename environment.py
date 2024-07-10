@@ -107,7 +107,7 @@ class Environment(MultiAgentEnv):
 
         self.maxsteps -= 1
         self.actions = action_dict
-        print(self.actions)
+        # print(self.actions)
 
         for i, action in action_dict.items():
             self.agents[i].move(action)
@@ -131,9 +131,6 @@ class Environment(MultiAgentEnv):
         self.active_agents = [agent_id for agent_id in self.active_agents if not terminateds[agent_id]]
 
         self.last_actions = self.actions
-
-        print(self.bends)
-
 
         # print("Observations:",observations,"\nTerminateds:", terminateds, "\nSteps left:",self.maxsteps)
         return observations, rewards, terminateds, truncateds, info
