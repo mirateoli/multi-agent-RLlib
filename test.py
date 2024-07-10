@@ -50,8 +50,10 @@ checkpoint_dir = os.path.join('C:\\Users\\MDO-Disco\\Documents\\Thesis\\RLlib\\C
 
 
 # bend minimization 90 and 45 deg
-trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\\PPO_2024-06-28_11-22-55\\PPO_MultiPipe_4b23b_00028_28_lr=0.0000,sgd_minibatch_size=256,train_batch_size=32000_2024-06-28_11-23-19\\checkpoint_000009"
+#trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\\PPO_2024-06-28_11-22-55\\PPO_MultiPipe_4b23b_00028_28_lr=0.0000,sgd_minibatch_size=256,train_batch_size=32000_2024-06-28_11-23-19\\checkpoint_000009"
 
+# engine 90 deg
+trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\\PPO_2024-07-09_13-36-29\\PPO_MultiPipe_c6470_00031_31_lr=0.0001,sgd_minibatch_size=512,train_batch_size=32000_2024-07-09_13-36-54\\checkpoint_000009"
 def env_creator(env_config):
     return Environment(env_config)
 
