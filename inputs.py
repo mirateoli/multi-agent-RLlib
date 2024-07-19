@@ -19,7 +19,7 @@ z_length = DS.height
 
 grid_size = max(x_length, y_length, z_length)
 
-num_directions = 6
+num_directions = 18
 
 
 
