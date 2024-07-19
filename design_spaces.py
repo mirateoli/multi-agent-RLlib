@@ -1,8 +1,8 @@
 from vedo import *
 
-# obstacles = np.array([(2,6,2,8,0,5),(9,14,8,12,0,4),(0,2,12,18,0,3),(18,20,3,8,0,9)])  # bounding box (xmin,xmax,ymin,ymax,zmin,zmax)
+obstacles = np.array([(2,6,2,8,0,5),(9,14,8,12,0,4),(0,2,12,18,0,3),(18,20,3,8,0,9)])  # bounding box (xmin,xmax,ymin,ymax,zmin,zmax)
 # obstacles = np.array([(3,7,2,8,3,7),(9,14,8,12,9,13),(3,6,10,14,0,3),(10,14,8,16,0,2)])
-obstacles = np.array([(6,14,3,16,4,12)])
+# obstacles = np.array([(6,14,3,16,4,12)])
 
 # Define room dimensions
 length = 20
