@@ -4,10 +4,16 @@ import pandas as pd
 from ray.tune.analysis.experiment_analysis import ExperimentAnalysis
 import matplotlib.cm as cm
 import numpy as np
+import matplotlib as mpl
+
+mpl.rc('font',family='Times New Roman')
 
 
 # Specify the directory where the Ray Tune results are saved
-results_dir = "C:\\Users\\MDO-Disco\\ray_results\\PPO_2024-07-02_16-49-45"
+results_dir = "C:\\Users\\MDO-Disco\\ray_results\\PPO_2024-07-18_12-07-12"
+# Create a new directory for the plots
+plots_dir = os.path.join(results_dir, "plots")
+os.makedirs(plots_dir, exist_ok=True)
 
 # Load the results using Ray Tune Analysis
 analysis = ExperimentAnalysis(results_dir)
@@ -15,9 +21,17 @@ analysis = ExperimentAnalysis(results_dir)
 # Get all trial dataframes
 dfs = analysis.trial_dataframes
 
+# Set font size
+font_size = 9
+
+font_name = "Times New Roman"
+
+# Set line width
+line_width = 0.8
+
 # Function to plot mean reward for all trials
-def plot_all_trials(dfs, title):
-    plt.figure(figsize=(10, 6))
+def plot_all_trials(dfs, title, filepath):
+    plt.figure(figsize=(8, 5))
 
     # Create a list to store tuples of (trial_id, lr) for sorting
     trials_lr = [(trial_id, analysis.get_all_configs()[trial_id]["lr"]) for trial_id in dfs.keys()]
@@ -37,11 +51,12 @@ def plot_all_trials(dfs, title):
         # Plot mean reward for each trial
         plt.plot(df["training_iteration"], df["episode_reward_mean"], label=f"lr={lr_label}, sgd_minibatch={sgd_minibatch_size}, train_batch={train_batch_size}")
 
-    plt.xlabel("Training Iterations")
-    plt.ylabel("Mean Episode Reward")
-    plt.title(title)
-    plt.legend(loc='best')
+    plt.xlabel("Training Iterations", fontsize=font_size, fontname=font_name)
+    plt.ylabel("Mean Episode Reward", fontsize=font_size, fontname=font_name)
+    plt.title(title, fontsize=font_size, fontname=font_name)
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize=font_size)
     plt.grid(True)
+    plt.savefig(filepath, bbox_inches='tight')
     plt.show()
 
     # Retrieve the best checkpoint for the best overall trial
@@ -61,8 +76,8 @@ def plot_all_trials(dfs, title):
 
 # show specific hyperparameters
 
-def plot_hyperparameter(df_dicts, hyperparameter, hyperparameter_values, title):
-    plt.figure(figsize=(10, 6))
+def plot_hyperparameter(df_dicts, hyperparameter, hyperparameter_values, title, filepath):
+    plt.figure(figsize=(3, 1.5))
     
     colors = cm.rainbow(np.linspace(0, 1, len(hyperparameter_values)))
     value_color_map = {value: colors[i] for i, value in enumerate(hyperparameter_values)}
@@ -83,17 +98,18 @@ def plot_hyperparameter(df_dicts, hyperparameter, hyperparameter_values, title):
                     label = f"lr={analysis.get_all_configs()[trial_id]['lr']:.2e}"
                 else:
                     label = f"{hyperparameter}={value}"
-                plt.plot(df["training_iteration"], df["episode_reward_mean"], color=value_color_map[value], label=label)
+                plt.plot(df["training_iteration"], df["episode_reward_mean"], color=value_color_map[value], label=label, linewidth=line_width)
 
     # To avoid multiple labels for the same hyperparameter value, we create a unique legend
     handles, labels = plt.gca().get_legend_handles_labels()
     by_label = dict(zip(labels, handles))
     
-    plt.xlabel("Training Iterations")
-    plt.ylabel("Mean Episode Reward")
-    plt.title(title)
-    plt.legend(by_label.values(), by_label.keys(), loc='best')
+    plt.xlabel("Training Iterations", fontsize=font_size, fontname=font_name)
+    plt.ylabel("Mean Episode Reward", fontsize=font_size, fontname=font_name)
+    plt.title(title, fontsize=font_size, fontname=font_name)
+    plt.legend(by_label.values(), by_label.keys(), loc='lower right', fontsize=5)
     plt.grid(True)
+    plt.savefig(filepath, bbox_inches='tight')
     plt.show()
 
     # Print best performing trials
@@ -108,13 +124,13 @@ sgd_minibatch_sizes = sorted(set(config["sgd_minibatch_size"] for config in anal
 training_batch_sizes = sorted(set(config["train_batch_size"] for config in analysis.get_all_configs().values()))
 
 # Plot mean reward for all trials
-plot_all_trials(dfs, "Mean Episode Reward vs Training Iterations for All Trials")
+plot_all_trials(dfs, "Grid Search Optimization Results", os.path.join(plots_dir, "all_trials.png"))
 
 # Plot mean reward for different learning rates
-plot_hyperparameter(dfs, "lr", learning_rates, "Mean Episode Reward vs Training Iterations for Different Learning Rates")
+plot_hyperparameter(dfs, "lr", learning_rates, "Grid Search Optimization Results: lr", os.path.join(plots_dir, "learning_rates.png"))
 
 # Plot mean reward for different SGD minibatch sizes
-plot_hyperparameter(dfs, "sgd_minibatch_size", sgd_minibatch_sizes, "Mean Episode Reward vs Training Iterations for Different SGD Minibatch Sizes")
+plot_hyperparameter(dfs, "sgd_minibatch_size", sgd_minibatch_sizes, "Grid Search Optimization Results: Minibatch Size", os.path.join(plots_dir, "sgd_minibatch_sizes.png"))
 
 # Plot mean reward for different training batch sizes
-plot_hyperparameter(dfs, "train_batch_size", training_batch_sizes, "Mean Episode Reward vs Training Iterations for Different Training Batch Sizes")
+plot_hyperparameter(dfs, "train_batch_size", training_batch_sizes, "Grid Search Optimization Results: Batch Size", os.path.join(plots_dir, "training_batch_sizes.png"))

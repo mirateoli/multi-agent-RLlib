@@ -53,13 +53,26 @@ checkpoint_dir = os.path.join('C:\\Users\\MDO-Disco\\Documents\\Thesis\\RLlib\\C
 # #trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\\PPO_2024-06-28_11-22-55\\PPO_MultiPipe_4b23b_00028_28_lr=0.0000,sgd_minibatch_size=256,train_batch_size=32000_2024-06-28_11-23-19\\checkpoint_000009"
 
 # branching with bend min 90 deg
-trained_checkpoint_path = "C:\\Users\MDO-Disco\\ray_results\PPO_2024-07-02_16-49-45\\PPO_MultiPipe_9d3ce_00028_28_lr=0.0000,sgd_minibatch_size=256,train_batch_size=32000_2024-07-02_16-50-09\\checkpoint_000009"
+# trained_checkpoint_path = "C:\\Users\MDO-Disco\\ray_results\PPO_2024-07-02_16-49-45\\PPO_MultiPipe_9d3ce_00028_28_lr=0.0000,sgd_minibatch_size=256,train_batch_size=32000_2024-07-02_16-50-09\\checkpoint_000009"
 
 # branching with bend min 90 and 45 deg
 # trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\PPO_2024-07-03_12-46-47\\PPO_MultiPipe_d6568_00026_26_lr=0.0000,sgd_minibatch_size=128,train_batch_size=32000_2024-07-03_12-47-12\\checkpoint_000009"
 
 # engine 90 deg
-trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\\PPO_2024-07-09_13-36-29\\PPO_MultiPipe_c6470_00031_31_lr=0.0001,sgd_minibatch_size=512,train_batch_size=32000_2024-07-09_13-36-54\\checkpoint_000009"
+# trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\\PPO_2024-07-09_13-36-29\\PPO_MultiPipe_c6470_00031_31_lr=0.0001,sgd_minibatch_size=512,train_batch_size=32000_2024-07-09_13-36-54\\checkpoint_000009"
+
+#engine 90 deg bends (branch reward too high)
+# trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\PPO_2024-07-11_10-27-18\\\PPO_MultiPipe_ada35_00024_24_lr=0.0000,sgd_minibatch_size=64,train_batch_size=32000_2024-07-11_10-27-18\\checkpoint_000009"
+
+# engine 90 deg bends with reduced branch reward
+# trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\PPO_2024-07-12_11-59-16\\PPO_MultiPipe_b0e55_00031_31_lr=0.0001,sgd_minibatch_size=512,train_batch_size=32000_2024-07-12_11-59-38\\checkpoint_000009"
+
+# engine 90 deg bends with +2 branch
+# trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\PPO_2024-07-13_18-24-57\\PPO_MultiPipe_bc5d6_00031_31_lr=0.0001,sgd_minibatch_size=512,train_batch_size=32000_2024-07-13_18-25-25\\checkpoint_000009"
+
+# engine 90 deg bends with +3 branching
+trained_checkpoint_path = "C:\\Users\\MDO-Disco\\ray_results\PPO_2024-07-15_15-21-36\\PPO_MultiPipe_74790_00004_4_lr=0.0000,sgd_minibatch_size=256,train_batch_size=4000_2024-07-15_15-21-37\\checkpoint_000009"
+
 def env_creator(env_config):
     return Environment(env_config)
 
@@ -111,7 +124,7 @@ terminated = False
 obs, info = env.reset()
 print(obs)
 start_time = time.time()
-while not terminated or truncated:
+while env.maxsteps > 0: # not terminated or truncated or 
     action = {}
     for agent_id, agent_obs in obs.items():
         action[agent_id] = agent.compute_single_action(agent_obs)
@@ -119,10 +132,12 @@ while not terminated or truncated:
     terminated = terminated['__all__']
     truncated = truncated['__all__']
     episode_reward += sum(reward.values())
+    print(env.maxsteps)
     # print("agent moved")
     # print("current position",env.agents.get_position())
 
 print(env.paths )
+print("episode reward:", episode_reward)
 
 end_time = time.time()
 elapsed_time = end_time - start_time
