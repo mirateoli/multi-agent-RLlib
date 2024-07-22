@@ -7,7 +7,7 @@ import numpy as np
 
 
 # Specify the directory where the Ray Tune results are saved
-results_dir = "C:\\Users\\MDO-Disco\\ray_results\\PPO_2024-07-18_12-07-12"
+results_dir = "C:\\Users\\MDO-Disco\\Documents\\Thesis\\GridSearchResults\\PPO_2024-06-28_11-22-55"
 
 # Load the results using Ray Tune Analysis
 analysis = ExperimentAnalysis(results_dir)
