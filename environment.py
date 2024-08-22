@@ -1,5 +1,3 @@
-from numpy.random import randint
-
 import copy
 import random
 
@@ -15,77 +13,78 @@ import design_spaces as DS
 
 
 class Environment(MultiAgentEnv):
-    
+
     def __init__(self, config: EnvContext):
+        # Initialize the environment and set up the basic parameters
         super().__init__()
 
+        # Load obstacles from the dataset and find the free coordinates (i.e., those not occupied by obstacles)
         self.obstacles = DS.obstacles
         self.free_coords = self.find_free_coords(self.obstacles, DS.length, DS.width, DS.height)
         
+        # Check if the environment is in training mode
         self.train = config["train"]
         self.num_pipes = config["num_pipes"]
-        self.num_agents = self.num_pipes
+        self.num_agents = self.num_pipes  # The number of agents equals the number of pipes
 
-        # if training, randomize start and end points
+        # Randomize start and end points for training, or use fixed points for testing
         if self.train:
             self.start_pts = random.sample(self.free_coords, 3)
-            # self.start_pts =config["start_pts"] # same start points if doing branching
             self.end_pts = random.sample(self.free_coords, 3)
-        # if testing, use defined start and end points
         else:
             self.start_pts = config["start_pts"]
             self.end_pts = config["end_pts"]
 
+        # Initialize obstacle ranges in x, y, and z axes if obstacles are present
         if self.obstacles is not None:
             self.obs_ranges = {
-                    "x" : [],
-                    "y" : [],
-                    "z" : [],
-                }
+                "x": [],
+                "y": [],
+                "z": [],
+            }
             for obstacle in self.obstacles:
                 self.obs_ranges['x'].append((obstacle[0], obstacle[1]))
                 self.obs_ranges['y'].append((obstacle[2], obstacle[3]))
                 self.obs_ranges['z'].append((obstacle[4], obstacle[5]))
-                
         else:
             self.obs_ranges = None
 
+        # Initialize agents with their start and end points
         self.agents = [PipeAgent(self.start_pts[i], self.end_pts[i]) for i in range(self.num_agents)]
-        self._agent_ids = set(range(self.num_pipes))
-        self.terminateds = set()
-        self.truncateds = set()
-        self.observation_space = agent_obs_space
-        self.action_space = agent_action_space
+        self._agent_ids = set(range(self.num_pipes))  # Set of agent IDs
+        self.terminateds = set()  # Track terminated agents
+        self.truncateds = set()   # Track truncated agents
+        self.observation_space = agent_obs_space  # Define observation space for agents
+        self.action_space = agent_action_space  # Define action space for agents
 
+        # Initialize paths dictionary to store the paths taken by each agent
         self.paths = {i: np.array([self.start_pts[i]]) for i in range(self.num_agents)}
 
-        # define variable to store last actions so bend can be checked
+        # Initialize a variable to store the last actions of the agents
         self.last_actions = None
 
-
-    def reset(self,*, seed=None, options=None):
+    def reset(self, *, seed=None, options=None):
+        # Reset the environment to its initial state
         super().reset(seed=seed)
 
-        # if training, randomize start and end points
+        # Reinitialize start and end points depending on the mode (training or testing)
         if self.train:
             self.start_pts = random.sample(self.free_coords, 3)
-            # self.start_pts =config["start_pts"] # same start points if doing branching
             self.end_pts = random.sample(self.free_coords, 3)
-        # if testing, use defined start and end points
         else:
             self.start_pts = self.start_pts
             self.end_pts = self.end_pts
 
+        # Reinitialize agents, active agents, and paths
         self.agents = [PipeAgent(self.start_pts[i], self.end_pts[i]) for i in range(self.num_agents)]
-
         self.active_agents = copy.deepcopy(self._agent_ids)
         self.paths = {i: np.array([self.start_pts[i]]) for i in range(self.num_agents)}
 
-        # print("Environment Reset")
+        # Reset agent parameters and observations
         self.maxsteps = 100
         info = {}
         for agent in self.agents:
-            agent.initialize() 
+            agent.initialize()
         observations = {}
         for i, agent in enumerate(self.agents):
             observations[i] = {
@@ -96,87 +95,87 @@ class Environment(MultiAgentEnv):
 
         info = {agent: {} for agent in self.agents}
 
+        # Reset action tracking variables
         self.actions = None
         self.last_actions = None
-        self.bends = {i: 0 for i in range(self.num_agents)}
+        self.bends = {i: 0 for i in range(self.num_agents]}
 
         return observations, info
 
     def step(self, action_dict):
-        observations, rewards, terminateds, truncateds, info, = {}, {}, {}, {}, {}
+        # Take a step in the environment based on the actions provided by the agents
+        observations, rewards, terminateds, truncateds, info = {}, {}, {}, {}, {}
 
         self.maxsteps -= 1
         self.actions = action_dict
-        # print(self.actions)
 
+        # Move each agent based on its respective action
         for i, action in action_dict.items():
             self.agents[i].move(action)
 
-
+        # Collect observations, rewards, and check termination and truncation statuses
         observations = {i: self.get_observation(i) for i in self.active_agents}
         rewards = {i: self.get_reward(i) for i in self._agent_ids}
-        terminateds = {i: self.is_terminated(i) for i in self.active_agents} # changed to try to debug
+        terminateds = {i: self.is_terminated(i) for i in self.active_agents}
         truncateds = {i: self.maxsteps <= 0 for i in self._agent_ids}
 
+        # Check if all agents have either terminated or truncated
         terminateds["__all__"] = all(terminateds.values())
         truncateds["__all__"] = all(truncateds.values())
 
-        #TODO only add to path if agent was active
+        # Update paths for agents that are still active
         for i in self.active_agents:
-            self.paths[i] = np.vstack((self.paths[i],self.agents[i].get_position()))
+            self.paths[i] = np.vstack((self.paths[i], self.agents[i].get_position()))
 
-
-        # remove agent from active agents if terminated is true
-        # Remove agent from active_agents if terminated is true
+        # Remove agents that have terminated from the list of active agents
         self.active_agents = [agent_id for agent_id in self.active_agents if not terminateds[agent_id]]
 
+        # Update the last actions performed
         self.last_actions = self.actions
 
-        # print("Observations:",observations,"\nTerminateds:", terminateds, "\nSteps left:",self.maxsteps)
         return observations, rewards, terminateds, truncateds, info
 
-
     def render(self):
+        # Render the environment, visualizing the paths taken by the agents and the obstacles
         plotter = Plotter()
 
+        # Prepare paths and key points (start and end points) for plotting
         pts = {i: self.paths[i] for i in range(self.num_agents)}
         plot_pts = {i: Points(pts[i]) for i in range(self.num_agents)}
-
-        key_pts = {i: Points([self.start_pts[i],self.end_pts[i]]) for i in range(self.num_agents)}                    
-
+        key_pts = {i: Points([self.start_pts[i], self.end_pts[i]]) for i in range(self.num_agents)}
         ln = {i: Line(pts[i]) for i in range(self.num_agents)}
-        # ln[0].color("red5").linewidth(10)
-        # ln[1].color("green").linewidth(10)
-        # ln[2].color("blue").linewidth(10)
 
         txt = ''
 
+        # Add agent paths to the plot
         for pts in plot_pts.values():
             pts.color("black").ps(11)
             plotter.add(pts)
 
+        # Add start and end points to the plot
         for pts in key_pts.values():
             pts.color("yellow").ps(12)
             plotter.add(pts)
 
+        # Add lines representing the paths taken by the agents
         for i, lns in enumerate(ln.values()):
-            txt += 'Length of line ' + str(i) +': ' +str(lns.length()) + '\n'
+            txt += 'Length of line ' + str(i) + ': ' + str(lns.length()) + '\n'
             lns.color("red").linewidth(10)
             plotter.add(lns)
 
         plotter.add(Text2D(txt))
 
-        DS.room(plotter, x_length+1, y_length+1, z_length+1)
+        # Add the room to the plot, including any obstacles
+        DS.room(plotter, x_length + 1, y_length + 1, z_length + 1)
 
         if self.obstacles is not None:
             for obstacle in self.obstacles:
                 bounding_box = obstacle.tolist()
                 box = Box(size=bounding_box)
-                box.color(c=(135,206,250))
+                box.color(c=(135, 206, 250))
                 box.opacity(0.9)
                 plotter.add(box)
             plotter.show(axes=1)
-            # show(key_pts[0], key_pts[1],Points(pts[0]),Points(pts[1]),ln[0], ln[1],box,axes=1).close()
         else:
             plotter.show(axes=1).close()
 
@@ -184,90 +183,83 @@ class Environment(MultiAgentEnv):
         pass
 
     def get_observation(self, agent_id):
+        # Get the observation for a specific agent, including its current location, goal, and distance to goal
         return {
-                'agent_location': self.agents[agent_id].get_position(),
-                'goal_position': self.agents[agent_id].goal,
-                'distance_to_goal': self.agents[agent_id].distance_to_goal()
-                }
+            'agent_location': self.agents[agent_id].get_position(),
+            'goal_position': self.agents[agent_id].goal,
+            'distance_to_goal': self.agents[agent_id].distance_to_goal()
+        }
+
     def get_reward(self, agent_id):
-        # reward should be zero if agent has terminated
+        # Calculate the reward for a specific agent based on its actions and environment interactions
+
+        # No reward if the agent has already terminated
         if agent_id not in self.active_agents:
-                reward = 0
+            reward = 0
         else:
-            reward = -0.5 # penalty for every step
-            if(self.agents[agent_id].position == self.agents[agent_id].goal).all():
-                reward += 50 # reward for reaching goal
-                reward += - 1 * self.path_length(self.paths[agent_id]) # penalty for path length
+            reward = -0.5  # Penalty for each step taken
+            if (self.agents[agent_id].position == self.agents[agent_id].goal).all():
+                reward += 50  # Reward for reaching the goal
+                reward -= 1 * self.path_length(self.paths[agent_id])  # Penalty for the path length taken
             else:
-                reward += - 0.1 * np.abs(np.linalg.norm(self.agents[agent_id].distance_to_goal())) # reward for how far from goal
+                reward -= 0.1 * np.abs(np.linalg.norm(self.agents[agent_id].distance_to_goal()))  # Reward for reducing distance to goal
+            
+            # Additional penalty if the agent moves through an obstacle
             if self.obs_ranges is not None:
                 for i in range(self.obstacles.shape[0]):
-                    if (self.agents[agent_id].position[0] in range(self.obs_ranges["x"][i][0],self.obs_ranges["x"][i][1]+1)) and\
-                        (self.agents[agent_id].position[1] in range(self.obs_ranges["y"][i][0],self.obs_ranges["y"][i][1]+1)) and\
-                        (self.agents[agent_id].position[2] in range(self.obs_ranges["z"][i][0],self.obs_ranges["z"][i][1]+1)):
-                        reward += -5 # penalty for moving through obstacle
-                        # print(agent_id,"collided with obstacle")
+                    if (self.agents[agent_id].position[0] in range(self.obs_ranges["x"][i][0], self.obs_ranges["x"][i][1] + 1)) and \
+                       (self.agents[agent_id].position[1] in range(self.obs_ranges["y"][i][0], self.obs_ranges["y"][i][1] + 1)) and \
+                       (self.agents[agent_id].position[2] in range(self.obs_ranges["z"][i][0], self.obs_ranges["z"][i][1] + 1)):
+                        reward -= 5  # Penalty for colliding with an obstacle
 
-            # check for pipe bend
-            if self.last_actions != None:
+            # Check for a pipe bend (a change in direction), and apply a penalty if so
+            if self.last_actions is not None:
                 if (np.cross(actions_key[self.last_actions[agent_id]], actions_key[self.actions[agent_id]])).any() != 0:
                     self.bends[agent_id] += 1
-                    reward += -2
-            
-            # # check for pipe collision
+                    reward -= 2
+
+            # Uncomment the following section to add a reward/penalty for pipe collisions in branched systems
             # if self.path_collision(agent_id):
-            #     # print("Pipe ",agent_id,"collided")
-            #     reward += 5 # positive if branching
+            #     reward += 5  # Positive reward if branching is desired
         
         return reward
     
     def is_terminated(self, agent_id):
-        if(self.agents[agent_id].position == self.agents[agent_id].goal).all():
-            terminated = True
-        else:
-            terminated = False
-        return terminated
-    
+        # Determine if the agent has reached its goal (i.e., if it has terminated)
+        return (self.agents[agent_id].position == self.agents[agent_id].goal).all()
+
     def remove_agent(self, agent_id):
+        # Remove an agent from the set of active agents
         self.active_agents.remove(agent_id)
 
     def path_length(self, path):
+        # Calculate the length of the path taken by an agent
         pts = Points(path)
         ln = Line(pts)
         return ln.length()
     
     def path_collision(self, agent_id):
+        # Check if the path of one agent collides with another agent's path
         for i in range(self.num_agents):
             if i != agent_id:
                 if (self.agents[agent_id].position == self.agents[i].position).all():
                     return True
-                else:
-                    return False
-            else:
-                continue
-
-    def output_file(self, file_path):
-        # Open the file in append mode ('a') or write mode ('w')
-        # 'a' mode: appends to the end of the file if it exists, or creates a new file if it doesn't
-        # 'w' mode: opens the file for writing, or creates a new file if it doesn't exist
-        with open(file_path, 'a') as file:
-            # Write some content to the file
-            file.write('Hello, world!\n')
+        return False
 
     def find_free_coords(self, obstacles, max_x, max_y, max_z):
         """
-        Generate coordinates outside the given 3D bounding boxes within the range [0, max_value].
+        Generate coordinates outside the given 3D bounding boxes within the range [0, max_x/y/z].
 
         Parameters:
         - obstacles: numpy array of shape (N, 6) where each row is (xmin, xmax, ymin, ymax, zmin, zmax)
-        - max_value: maximum value for x, y, and z coordinates
+        - max_x/y/z: maximum values for x, y, and z coordinates
 
         Returns:
         - List of tuples representing coordinates outside the bounding boxes
         """
-        # this one has different x y and z max values
         outside_coords = []
         
+        # Iterate through the entire grid space and check for points outside of any obstacle
         for x in range(max_x):
             for y in range(max_y):
                 for z in range(max_z):
@@ -278,10 +270,12 @@ class Environment(MultiAgentEnv):
                             is_outside = False
                             break
                     
+                    # If the point is outside all obstacles, add it to the list
                     if is_outside:
                         outside_coords.append((x, y, z))
         
         return outside_coords
+
         
 
 # # test
